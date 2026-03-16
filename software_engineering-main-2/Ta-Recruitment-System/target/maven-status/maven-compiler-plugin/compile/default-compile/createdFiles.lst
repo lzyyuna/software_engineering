@@ -1,0 +1,7 @@
+com\group4\tarecruitment\repository\ApplicantCsvRepository.class
+com\group4\tarecruitment\service\ApplicantService.class
+com\group4\tarecruitment\view\HelloView.class
+com\group4\tarecruitment\HelloFxApp.class
+com\group4\tarecruitment\repository\ApplicantJsonRepository.class
+com\group4\tarecruitment\controller\HelloController.class
+com\group4\tarecruitment\model\Applicant.class
