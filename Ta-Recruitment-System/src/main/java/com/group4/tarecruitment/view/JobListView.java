@@ -33,6 +33,7 @@ public class JobListView {
     private CheckBox teachingCb;
     private CheckBox pythonCb;
     private CheckBox officeCb;
+    private CheckBox strongOnlyCb;
     private ComboBox<String> typeCombo;
 
     public JobListView(Stage stage, Applicant applicant) {
@@ -63,6 +64,7 @@ public class JobListView {
         teachingCb = new CheckBox("Teaching");
         pythonCb = new CheckBox("Python");
         officeCb = new CheckBox("Office");
+        strongOnlyCb = new CheckBox("Only show strong matches");
 
         typeCombo = new ComboBox<>();
         typeCombo.getItems().addAll("All", "Module TA", "Invigilation TA");
@@ -72,19 +74,32 @@ public class JobListView {
         Button resetBtn = new Button("Reset");
         resetBtn.setStyle(btnStyle + "-fx-background-color: #95a5a6; -fx-text-fill: white;");
 
-        HBox filterBar = new HBox(
+        HBox filterSpacer = new HBox();
+        HBox.setHgrow(filterSpacer, Priority.ALWAYS);
+        HBox typeGap = new HBox();
+        typeGap.setMinWidth(24);
+
+        HBox filterTopRow = new HBox(
                 10,
                 new Label("Skill Tags:"),
                 javaCb, englishCb, teachingCb, pythonCb, officeCb,
+                typeGap,
                 new Label("Position Type:"),
                 typeCombo,
+                filterSpacer,
                 resetBtn
         );
-        filterBar.setAlignment(Pos.CENTER_LEFT);
-        filterBar.setPadding(new Insets(5, 0, 10, 0));
+        filterTopRow.setAlignment(Pos.CENTER_LEFT);
 
-        VBox jobListBox = new VBox(10);
-        jobListBox.setPadding(new Insets(15));
+        HBox filterSecondRow = new HBox(10, strongOnlyCb);
+        filterSecondRow.setAlignment(Pos.CENTER_LEFT);
+        filterSecondRow.setPadding(new Insets(0, 0, 0, 92));
+
+        VBox filterBar = new VBox(4, filterTopRow, filterSecondRow);
+        filterBar.setPadding(new Insets(2, 0, 4, 0));
+
+        VBox jobListBox = new VBox(8);
+        jobListBox.setPadding(new Insets(10));
         jobListBox.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 8;");
 
         HBox pageBox = new HBox(10);
@@ -138,6 +153,7 @@ public class JobListView {
         teachingCb.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
         pythonCb.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
         officeCb.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
+        strongOnlyCb.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
         typeCombo.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
 
         // Reset
@@ -147,13 +163,14 @@ public class JobListView {
             teachingCb.setSelected(false);
             pythonCb.setSelected(false);
             officeCb.setSelected(false);
+            strongOnlyCb.setSelected(false);
             typeCombo.setValue("All");
             currentPage = 1;
             loadJobs(jobListBox, pageLabel);
         });
 
-        VBox root = new VBox(15, title, topBar, filterBar, jobListBox, new Separator(), pageBox);
-        root.setPadding(new Insets(25));
+        VBox root = new VBox(12, title, topBar, filterBar, jobListBox, new Separator(), pageBox);
+        root.setPadding(new Insets(20, 25, 18, 25));
         root.setStyle("-fx-background-color: #f5f6fa;");
         return root;
     }
@@ -214,6 +231,13 @@ public class JobListView {
         }
 
         // 单选岗位类型
+        if (strongOnlyCb.isSelected()) {
+            SkillMatchResult match = skillMatchService.match(applicant, job);
+            if (!"Strong Match".equals(match.getRecommendationLevel())) {
+                return false;
+            }
+        }
+
         String selectedType = typeCombo.getValue();
         if (selectedType != null
                 && !"All".equals(selectedType)
@@ -256,8 +280,8 @@ public class JobListView {
             for (Job job : pageJobs) {
                 SkillMatchResult match = skillMatchService.match(applicant, job);
 
-                VBox jobItem = new VBox(6);
-                jobItem.setPadding(new Insets(10));
+                VBox jobItem = new VBox(5);
+                jobItem.setPadding(new Insets(8, 10, 8, 10));
                 jobItem.setStyle("-fx-background-color: white; -fx-background-radius: 8; "
                         + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4,0,0,1);");
 
@@ -282,7 +306,7 @@ public class JobListView {
                 missingSkillsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #7f8c8d;");
 
                 Label recommendationLabel = new Label("Recommendation: " + safe(match.getRecommendationLevel()));
-                recommendationLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #8e44ad;");
+                recommendationLabel.setStyle(getRecommendationBadgeStyle(match.getRecommendationLevel()));
 
                 Button detailBtn = new Button("View Details");
                 detailBtn.setStyle("-fx-font-size: 13px; -fx-padding: 6 12; -fx-background-color: #3498db; "
@@ -296,7 +320,7 @@ public class JobListView {
 
                 HBox matchInfoRow = new HBox(20, matchScoreLabel, matchedSkillsLabel, missingSkillsLabel);
                 matchInfoRow.setAlignment(Pos.CENTER_LEFT);
-                matchInfoRow.setPadding(new Insets(2, 0, 2, 0));
+                matchInfoRow.setPadding(new Insets(1, 0, 1, 0));
 
                 HBox bottomBar = new HBox();
                 bottomBar.setAlignment(Pos.CENTER_LEFT);
@@ -330,5 +354,37 @@ public class JobListView {
 
     private String safe(String value) {
         return value == null ? "" : value;
+    }
+
+    private String getRecommendationBadgeStyle(String recommendationLevel) {
+        String level = recommendationLevel == null ? "" : recommendationLevel;
+        String backgroundColor;
+        String textColor;
+
+        switch (level) {
+            case "Strong Match":
+                backgroundColor = "#e8f5e9";
+                textColor = "#1b5e20";
+                break;
+            case "Moderate Match":
+                backgroundColor = "#fff8e1";
+                textColor = "#e65100";
+                break;
+            case "Weak Match":
+                backgroundColor = "#fdecea";
+                textColor = "#c62828";
+                break;
+            default:
+                backgroundColor = "#eceff1";
+                textColor = "#455a64";
+                break;
+        }
+
+        return "-fx-font-size: 12px;"
+                + "-fx-font-weight: bold;"
+                + "-fx-text-fill: " + textColor + ";"
+                + "-fx-background-color: " + backgroundColor + ";"
+                + "-fx-background-radius: 4;"
+                + "-fx-padding: 4 10;";
     }
 }
