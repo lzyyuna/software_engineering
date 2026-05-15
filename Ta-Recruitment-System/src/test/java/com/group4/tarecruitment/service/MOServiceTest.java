@@ -15,16 +15,16 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Integration tests for MOService.
  *
- * ÎªÊ²Ã´ÓÃ¼¯³É²âÊÔ¶ø²»ÊÇ Mock£º
- *   reviewApplication() µÄÈ¨ÏŞĞ£ÑéÒÀÀµ"¶Á Job ÎÄ¼şÈ·ÈÏ moName"£¬
- *   ×´Ì¬±ä¸üÒÀÀµ"¶Á³ö Application ¡ú ĞŞ¸Ä ¡ú Ğ´»ØÎÄ¼ş"µÄÍêÕûÁ÷³Ì¡£
- *   Mock µôºóÖ»ÄÜÑéÖ¤µ÷ÓÃÁ´£¬ÎŞ·¨ÑéÖ¤Êı¾İÊÇ·ñÕæµÄ±»ÕıÈ·³Ö¾Ã»¯¡£
+ * ä¸ºä»€ä¹ˆç”¨é›†æˆæµ‹è¯•è€Œä¸æ˜¯ Mockï¼š
+ *   reviewApplication() çš„æƒé™æ ¡éªŒä¾èµ–"è¯» Job æ–‡ä»¶ç¡®è®¤ moName"ï¼Œ
+ *   çŠ¶æ€å˜æ›´ä¾èµ–"è¯»å‡º Application â†’ ä¿®æ”¹ â†’ å†™å›æ–‡ä»¶"çš„å®Œæ•´æµç¨‹ã€‚
+ *   Mock æ‰ååªèƒ½éªŒè¯è°ƒç”¨é“¾ï¼Œæ— æ³•éªŒè¯æ•°æ®æ˜¯å¦çœŸçš„è¢«æ­£ç¡®æŒä¹…åŒ–ã€‚
  *
- * ÓÅ»¯µã£º
- *   1. ÓÃ @TempDir Ìæ´úÊÖ¶¯É¾ÎÄ¼ş£¬Ã¿¸ö²âÊÔÍêÈ«¸ôÀë
- *   2. ÓÃ @BeforeEach Í³Ò»³õÊ¼»¯ÒÀÀµ
- *   3. ÌáÈ¡ seedJob / seedApp / findById ¸¨Öú·½·¨£¬Ïû³ıÖØ¸´
- *   4. Ã¿¸ö²âÊÔµÄ Arrange Ö»×¼±¸µ±Ç°²âÊÔĞèÒªµÄ×îÉÙÊı¾İ
+ * ä¼˜åŒ–ç‚¹ï¼š
+ *   1. ç”¨ @TempDir æ›¿ä»£æ‰‹åŠ¨åˆ æ–‡ä»¶ï¼Œæ¯ä¸ªæµ‹è¯•å®Œå…¨éš”ç¦»
+ *   2. ç”¨ @BeforeEach ç»Ÿä¸€åˆå§‹åŒ–ä¾èµ–
+ *   3. æå– seedJob / seedApp / findById è¾…åŠ©æ–¹æ³•ï¼Œæ¶ˆé™¤é‡å¤
+ *   4. æ¯ä¸ªæµ‹è¯•çš„ Arrange åªå‡†å¤‡å½“å‰æµ‹è¯•éœ€è¦çš„æœ€å°‘æ•°æ®
  */
 @DisplayName("MOService Integration Tests")
 public class MOServiceTest {
@@ -46,25 +46,47 @@ public class MOServiceTest {
         moService = new MOService(jobsPath, appsPath);
     }
 
-    // ©¤©¤ ¸¨Öú·½·¨ ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+    // â”€â”€ è¾…åŠ©æ–¹æ³• â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-    /** Ğ´Èëµ¥¸ö Job µ½ÎÄ¼ş */
+    /** å†™å…¥å•ä¸ª Job åˆ°æ–‡ä»¶ */
     private void seedJob(String jobId, String course, String moName) throws Exception {
-        jobRepo.saveAll(List.of(new Job(
-                jobId, course, "Module TA", 10, moName, moName + "@bupt.edu",
-                "Recruiting", "2026-03-01 10:00:00", "skill", "help", "2026-9"
-        )));
+        seedJob(jobId, course, moName, "Recruiting", "2026-03-01 10:00:00");
     }
 
-    /** Ğ´Èëµ¥¸ö Application µ½ÎÄ¼ş */
+    /** å†™å…¥å•ä¸ª Job åˆ°æ–‡ä»¶ï¼ˆå¯æŒ‡å®šçŠ¶æ€å’Œå‘å¸ƒæ—¶é—´ï¼‰ */
+    private void seedJob(String jobId, String course, String moName,
+                         String status, String releaseTime) throws Exception {
+        java.util.List<Job> existing = new java.util.ArrayList<>(jobRepo.loadAll());
+        existing.add(new Job(
+                jobId, course, "Module TA", 10, moName, moName + "@bupt.edu",
+                status, releaseTime, "skill", "help", "2026-9"
+        ));
+        jobRepo.saveAll(existing);
+    }
+
+    /** å†™å…¥å•ä¸ª Application åˆ°æ–‡ä»¶ */
     private void seedApp(String appId, String taId, String jobId,
                          String status, String comment) throws Exception {
-        appRepo.saveAll(List.of(
-                new Application(appId, taId, jobId, "2026-03-02 12:00:00", status, comment)
-        ));
+        seedApp(appId, taId, jobId, status, comment, "2026-03-02 12:00:00");
     }
 
-    /** ´ÓÎÄ¼şÖĞ°´ ID ²éÕÒ Application */
+    /** å†™å…¥å•ä¸ª Application åˆ°æ–‡ä»¶ï¼ˆå¯æŒ‡å®šç”³è¯·æ—¶é—´ï¼‰ */
+    private void seedApp(String appId, String taId, String jobId,
+                         String status, String comment, String applicationTime) throws Exception {
+        java.util.List<Application> existing = new java.util.ArrayList<>(appRepo.loadAll());
+        existing.add(new Application(appId, taId, jobId, applicationTime, status, comment));
+        appRepo.saveAll(existing);
+    }
+
+    /** ä»æ–‡ä»¶ä¸­æŒ‰ ID æŸ¥æ‰¾ Job */
+    private Job findJobById(String jobId) throws Exception {
+        return jobRepo.loadAll().stream()
+                .filter(j -> jobId.equals(j.getJobId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /** ä»æ–‡ä»¶ä¸­æŒ‰ ID æŸ¥æ‰¾ Application */
     private Application findById(String appId) throws Exception {
         return appRepo.loadAll().stream()
                 .filter(a -> appId.equals(a.getApplicationId()))
@@ -73,7 +95,7 @@ public class MOServiceTest {
     }
 
     // =========================================================================
-    // Õı³£³¡¾°
+    // æ­£å¸¸åœºæ™¯
     // =========================================================================
 
     @Test
@@ -107,7 +129,7 @@ public class MOServiceTest {
     }
 
     // =========================================================================
-    // ÊäÈëĞ£Ñé
+    // è¾“å…¥æ ¡éªŒ
     // =========================================================================
 
     @Test
@@ -136,7 +158,7 @@ public class MOServiceTest {
     }
 
     // =========================================================================
-    // ±ß½çÇé¿ö
+    // è¾¹ç•Œæƒ…å†µ
     // =========================================================================
 
     @Test
@@ -165,16 +187,16 @@ public class MOServiceTest {
     }
 
     // =========================================================================
-    // È¨ÏŞ¿ØÖÆ
+    // æƒé™æ§åˆ¶
     // =========================================================================
 
     @Test
     @DisplayName("Review fails: MO cannot review another MO's job")
     void reviewApplication_wrongMo_returnsFalse() throws Exception {
-        seedJob("JOB-5", "java", "mo2");   // ¸ÚÎ»ÊôÓÚ mo2
+        seedJob("JOB-5", "java", "mo2");   // å²—ä½å±äº mo2
         seedApp("APP-5", "TA-5", "JOB-5", "Pending", "");
 
-        boolean result = moService.reviewApplication("APP-5", "mo1", "Approved", "good");  // mo1 ÉóºË
+        boolean result = moService.reviewApplication("APP-5", "mo1", "Approved", "good");  // mo1 å®¡æ ¸
 
         assertFalse(result);
     }
@@ -194,14 +216,14 @@ public class MOServiceTest {
     }
 
     // =========================================================================
-    // ×´Ì¬»úÔ¼Êø
+    // çŠ¶æ€æœºçº¦æŸ
     // =========================================================================
 
     @Test
     @DisplayName("Review fails: already Approved application cannot be reviewed again")
     void reviewApplication_alreadyApproved_returnsFalse() throws Exception {
         seedJob("JOB-6", "math", "mo1");
-        seedApp("APP-6", "TA-6", "JOB-6", "Approved", "old");  // ÒÑ¾­ÊÇ Approved
+        seedApp("APP-6", "TA-6", "JOB-6", "Approved", "old");  // å·²ç»æ˜¯ Approved
 
         boolean result = moService.reviewApplication("APP-6", "mo1", "Rejected", "new");
 
@@ -220,5 +242,321 @@ public class MOServiceTest {
         assertNotNull(updated);
         assertEquals("Approved", updated.getStatus());
         assertEquals("old",      updated.getReviewComment());
+    }
+
+    // =========================================================================
+    // postJob()
+    // =========================================================================
+
+    @Nested
+    @DisplayName("postJob()")
+    class PostJob {
+
+        @Test
+        @DisplayName("Valid input: returns a JOB- prefixed id and persists the job")
+        void postJob_valid_returnsIdAndPersists() throws Exception {
+            String jobId = moService.postJob("Java", "Module TA", 10,
+                    "mo1", "mo1@bupt.edu", "skillReq", "content", "2026-12");
+
+            assertNotNull(jobId);
+            assertTrue(jobId.startsWith("JOB-"), "Job id should start with JOB-");
+
+            Job saved = findJobById(jobId);
+            assertNotNull(saved);
+            assertEquals("Java",       saved.getCourseName());
+            assertEquals("Module TA",  saved.getPositionType());
+            assertEquals(10,           saved.getWeeklyWorkload());
+            assertEquals("mo1",        saved.getMoName());
+            assertEquals("Recruiting", saved.getStatus(), "Newly posted job should be Recruiting");
+            assertNotNull(saved.getReleaseTime());
+            assertFalse(saved.getReleaseTime().isBlank());
+        }
+
+        @Test
+        @DisplayName("Null courseName is rejected")
+        void postJob_nullCourse_returnsNull() throws Exception {
+            assertNull(moService.postJob(null, "Module TA", 10,
+                    "mo1", "mo1@bupt.edu", "s", "c", "2026-12"));
+            assertTrue(jobRepo.loadAll().isEmpty(), "No job should be persisted");
+        }
+
+        @Test
+        @DisplayName("Blank courseName is rejected")
+        void postJob_blankCourse_returnsNull() throws Exception {
+            assertNull(moService.postJob("   ", "Module TA", 10,
+                    "mo1", "mo1@bupt.edu", "s", "c", "2026-12"));
+            assertTrue(jobRepo.loadAll().isEmpty());
+        }
+
+        @Test
+        @DisplayName("Null positionType is rejected")
+        void postJob_nullPosition_returnsNull() throws Exception {
+            assertNull(moService.postJob("Java", null, 10,
+                    "mo1", "mo1@bupt.edu", "s", "c", "2026-12"));
+        }
+
+        @Test
+        @DisplayName("Zero or negative weeklyWorkload is rejected")
+        void postJob_invalidWorkload_returnsNull() throws Exception {
+            assertNull(moService.postJob("Java", "Module TA", 0,
+                    "mo1", "mo1@bupt.edu", "s", "c", "2026-12"));
+            assertNull(moService.postJob("Java", "Module TA", -5,
+                    "mo1", "mo1@bupt.edu", "s", "c", "2026-12"));
+        }
+
+        @Test
+        @DisplayName("Multiple posts append rather than overwrite")
+        void postJob_multipleCalls_appendsJobs() throws Exception {
+            moService.postJob("Java", "Module TA", 10, "mo1", "mo1@bupt.edu", "s", "c", "2026-12");
+            moService.postJob("Math", "Module TA", 8,  "mo1", "mo1@bupt.edu", "s", "c", "2026-12");
+
+            assertEquals(2, jobRepo.loadAll().size());
+        }
+    }
+
+    // =========================================================================
+    // getMyPostedJobs()
+    // =========================================================================
+
+    @Nested
+    @DisplayName("getMyPostedJobs()")
+    class GetMyPostedJobs {
+
+        @Test
+        @DisplayName("Only returns jobs owned by the given MO")
+        void filtersByMoName() throws Exception {
+            seedJob("JOB-A", "Java", "mo1", "Recruiting", "2026-03-01 10:00:00");
+            seedJob("JOB-B", "Math", "mo2", "Recruiting", "2026-03-02 10:00:00");
+            seedJob("JOB-C", "C++",  "mo1", "Recruiting", "2026-03-03 10:00:00");
+
+            List<Job> jobs = moService.getMyPostedJobs("mo1");
+
+            assertEquals(2, jobs.size());
+            jobs.forEach(j -> assertEquals("mo1", j.getMoName()));
+        }
+
+        @Test
+        @DisplayName("Sorted by releaseTime descending")
+        void sortedByReleaseTimeDesc() throws Exception {
+            seedJob("JOB-A", "Java", "mo1", "Recruiting", "2026-03-01 10:00:00");
+            seedJob("JOB-B", "Math", "mo1", "Recruiting", "2026-03-10 10:00:00");
+            seedJob("JOB-C", "C++",  "mo1", "Recruiting", "2026-03-05 10:00:00");
+
+            List<Job> jobs = moService.getMyPostedJobs("mo1");
+
+            assertEquals("JOB-B", jobs.get(0).getJobId(), "Newest first");
+            assertEquals("JOB-C", jobs.get(1).getJobId());
+            assertEquals("JOB-A", jobs.get(2).getJobId());
+        }
+
+        @Test
+        @DisplayName("Closed jobs are still returned (status is not filtered)")
+        void includesClosedJobs() throws Exception {
+            seedJob("JOB-A", "Java", "mo1", "Closed",     "2026-03-01 10:00:00");
+            seedJob("JOB-B", "Math", "mo1", "Recruiting", "2026-03-02 10:00:00");
+
+            assertEquals(2, moService.getMyPostedJobs("mo1").size());
+        }
+
+        @Test
+        @DisplayName("Returns empty when MO has no jobs")
+        void unknownMo_returnsEmpty() throws Exception {
+            seedJob("JOB-A", "Java", "mo1");
+
+            assertTrue(moService.getMyPostedJobs("mo-unknown").isEmpty());
+        }
+    }
+
+    // =========================================================================
+    // editJob()
+    // =========================================================================
+
+    @Nested
+    @DisplayName("editJob()")
+    class EditJob {
+
+        @Test
+        @DisplayName("Owner edits a Recruiting job: fields are updated and persisted")
+        void happyPath_fieldsUpdated() throws Exception {
+            seedJob("JOB-1", "Java", "mo1");
+
+            boolean ok = moService.editJob("JOB-1", "mo1", "Advanced Java",
+                    "Course TA", 15, "skill2", "content2", "2027-01");
+
+            assertTrue(ok);
+            Job updated = findJobById("JOB-1");
+            assertEquals("Advanced Java", updated.getCourseName());
+            assertEquals("Course TA",     updated.getPositionType());
+            assertEquals(15,              updated.getWeeklyWorkload());
+            assertEquals("skill2",        updated.getSkillRequirements());
+            assertEquals("content2",      updated.getJobContent());
+            assertEquals("2027-01",       updated.getDeadline());
+            assertEquals("Recruiting",    updated.getStatus(), "Status should be preserved");
+        }
+
+        @Test
+        @DisplayName("Edit by non-owner MO is rejected, data unchanged")
+        void wrongOwner_rejectedAndUnchanged() throws Exception {
+            seedJob("JOB-1", "Java", "mo1");
+
+            boolean ok = moService.editJob("JOB-1", "mo2", "Hacked",
+                    "Module TA", 99, "x", "x", "x");
+
+            assertFalse(ok);
+            Job unchanged = findJobById("JOB-1");
+            assertEquals("Java", unchanged.getCourseName());
+            assertEquals(10,     unchanged.getWeeklyWorkload());
+        }
+
+        @Test
+        @DisplayName("Edit on missing job returns false")
+        void missingJob_returnsFalse() throws Exception {
+            assertFalse(moService.editJob("JOB-NONE", "mo1", "X", "Module TA", 10, "s", "c", "d"));
+        }
+
+        @Test
+        @DisplayName("Edit on Closed job is rejected")
+        void closedJob_rejected() throws Exception {
+            seedJob("JOB-1", "Java", "mo1", "Closed", "2026-03-01 10:00:00");
+
+            assertFalse(moService.editJob("JOB-1", "mo1", "New", "Module TA", 12, "s", "c", "d"));
+            assertEquals("Java", findJobById("JOB-1").getCourseName());
+        }
+
+        @Test
+        @DisplayName("Invalid fields (blank/zero) are rejected")
+        void invalidFields_rejected() throws Exception {
+            seedJob("JOB-1", "Java", "mo1");
+
+            assertFalse(moService.editJob("JOB-1", "mo1", "",          "Module TA", 10, "s", "c", "d"));
+            assertFalse(moService.editJob("JOB-1", "mo1", "Java",      "",           10, "s", "c", "d"));
+            assertFalse(moService.editJob("JOB-1", "mo1", "Java",      "Module TA",   0, "s", "c", "d"));
+            assertFalse(moService.editJob("JOB-1", "mo1", null,        "Module TA", 10, "s", "c", "d"));
+            assertEquals("Java", findJobById("JOB-1").getCourseName(), "Original course preserved");
+        }
+    }
+
+    // =========================================================================
+    // closeJob()
+    // =========================================================================
+
+    @Nested
+    @DisplayName("closeJob()")
+    class CloseJob {
+
+        @Test
+        @DisplayName("Owner closes a Recruiting job: status becomes Closed")
+        void happyPath_statusBecomesClosed() throws Exception {
+            seedJob("JOB-1", "Java", "mo1");
+
+            boolean ok = moService.closeJob("JOB-1", "mo1");
+
+            assertTrue(ok);
+            assertEquals("Closed", findJobById("JOB-1").getStatus());
+        }
+
+        @Test
+        @DisplayName("Non-owner cannot close another MO's job")
+        void wrongOwner_rejected() throws Exception {
+            seedJob("JOB-1", "Java", "mo1");
+
+            assertFalse(moService.closeJob("JOB-1", "mo2"));
+            assertEquals("Recruiting", findJobById("JOB-1").getStatus());
+        }
+
+        @Test
+        @DisplayName("Closing a missing job returns false")
+        void missingJob_returnsFalse() throws Exception {
+            assertFalse(moService.closeJob("JOB-NONE", "mo1"));
+        }
+
+        @Test
+        @DisplayName("Already-closed job cannot be closed again")
+        void alreadyClosed_returnsFalse() throws Exception {
+            seedJob("JOB-1", "Java", "mo1", "Closed", "2026-03-01 10:00:00");
+
+            assertFalse(moService.closeJob("JOB-1", "mo1"));
+        }
+    }
+
+    // =========================================================================
+    // getJobApplications()
+    // =========================================================================
+
+    @Nested
+    @DisplayName("getJobApplications()")
+    class GetJobApplications {
+
+        @Test
+        @DisplayName("Owner sees all applications for their job, sorted desc by time")
+        void happyPath_returnsSortedApplications() throws Exception {
+            seedJob("JOB-1", "Java", "mo1");
+            seedApp("APP-1", "TA-1", "JOB-1", "Pending",  "", "2026-04-01 10:00:00");
+            seedApp("APP-2", "TA-2", "JOB-1", "Approved", "", "2026-04-03 10:00:00");
+            seedApp("APP-3", "TA-3", "JOB-1", "Rejected", "", "2026-04-02 10:00:00");
+
+            List<Application> apps = moService.getJobApplications("JOB-1", "mo1");
+
+            assertEquals(3, apps.size());
+            assertEquals("APP-2", apps.get(0).getApplicationId(), "Newest first");
+            assertEquals("APP-3", apps.get(1).getApplicationId());
+            assertEquals("APP-1", apps.get(2).getApplicationId());
+        }
+
+        @Test
+        @DisplayName("Non-owner gets empty list (permission denied)")
+        void wrongOwner_returnsEmpty() throws Exception {
+            seedJob("JOB-1", "Java", "mo1");
+            seedApp("APP-1", "TA-1", "JOB-1", "Pending", "");
+
+            assertTrue(moService.getJobApplications("JOB-1", "mo2").isEmpty());
+        }
+
+        @Test
+        @DisplayName("Only applications belonging to the target job are returned")
+        void filtersByJobId() throws Exception {
+            seedJob("JOB-1", "Java", "mo1");
+            seedJob("JOB-2", "Math", "mo1");
+            seedApp("APP-1", "TA-1", "JOB-1", "Pending", "");
+            seedApp("APP-2", "TA-2", "JOB-2", "Pending", "");
+
+            List<Application> apps = moService.getJobApplications("JOB-1", "mo1");
+
+            assertEquals(1, apps.size());
+            assertEquals("APP-1", apps.get(0).getApplicationId());
+        }
+
+        @Test
+        @DisplayName("Missing job returns empty list")
+        void missingJob_returnsEmpty() throws Exception {
+            assertTrue(moService.getJobApplications("JOB-NONE", "mo1").isEmpty());
+        }
+    }
+
+    // =========================================================================
+    // getJobById()
+    // =========================================================================
+
+    @Nested
+    @DisplayName("getJobById()")
+    class GetJobById {
+
+        @Test
+        @DisplayName("Returns job when id exists")
+        void existingId_returnsJob() throws Exception {
+            seedJob("JOB-1", "Java", "mo1");
+
+            Job j = moService.getJobById("JOB-1");
+
+            assertNotNull(j);
+            assertEquals("Java", j.getCourseName());
+        }
+
+        @Test
+        @DisplayName("Returns null when id does not exist")
+        void missingId_returnsNull() throws Exception {
+            seedJob("JOB-1", "Java", "mo1");
+            assertNull(moService.getJobById("JOB-NONE"));
+        }
     }
 }
