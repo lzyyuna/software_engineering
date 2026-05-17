@@ -115,6 +115,8 @@ public class JobDetailView {
         Label resultLabel = new Label("");
         resultLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 5 0 0 0;");
 
+        initializeApplyState(applyBtn, resultLabel);
+
         applyBtn.setOnAction(e -> {
             try {
                 String appId = jobService.submitApplication(applicant.getTaId(), job.getJobId());
@@ -157,6 +159,20 @@ public class JobDetailView {
         root.setAlignment(Pos.TOP_LEFT);
 
         return root;
+    }
+
+    private void initializeApplyState(Button applyBtn, Label resultLabel) {
+        try {
+            if (jobService.hasApplied(applicant.getTaId(), job.getJobId())) {
+                applyBtn.setDisable(true);
+                resultLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 13px; -fx-font-weight: bold;");
+                resultLabel.setText("You have already applied for this position.");
+            }
+        } catch (Exception ex) {
+            resultLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 13px; -fx-font-weight: bold;");
+            resultLabel.setText("Could not check application status: " + ex.getMessage());
+            ex.printStackTrace();
+        }
     }
 
     private void runAiAnalysis(SkillMatchResult matchResult) {

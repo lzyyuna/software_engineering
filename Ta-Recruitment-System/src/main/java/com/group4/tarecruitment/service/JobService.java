@@ -37,10 +37,7 @@ public class JobService {
 
     // TA-004: 提交申请
     public String submitApplication(String taId, String jobId) throws Exception {
-        List<Application> apps = appRepo.loadAll();
-        boolean alreadyApplied = apps.stream()
-                .anyMatch(a -> a.getTaId().equals(taId) && a.getJobId().equals(jobId));
-        if (alreadyApplied) {
+        if (hasApplied(taId, jobId)) {
             return null;
         }
 
@@ -49,6 +46,15 @@ public class JobService {
         Application app = new Application(appId, taId, jobId, time, "Pending", "");
         appRepo.save(app);
         return appId;
+    }
+
+    public boolean hasApplied(String taId, String jobId) throws Exception {
+        if (taId == null || jobId == null) {
+            return false;
+        }
+
+        return appRepo.loadAll().stream()
+                .anyMatch(a -> taId.equals(a.getTaId()) && jobId.equals(a.getJobId()));
     }
 
     // TA-005: 获取当前 TA 的所有申请记录，按申请时间倒序
