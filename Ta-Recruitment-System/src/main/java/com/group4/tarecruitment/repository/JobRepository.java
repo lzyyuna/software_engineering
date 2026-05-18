@@ -7,24 +7,47 @@ import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Persists TA recruitment job records in CSV format.
+ */
 public class JobRepository {
-    private  final String filePath;
+    private final String filePath;
+
+    /**
+     * Creates a repository using the default jobs CSV file.
+     */
     public JobRepository() {
         this.filePath = "data/jobs.csv";
     }
 
-    // �����ã������Զ���·������Ӧ @TempDir��
+    /**
+     * Creates a repository using a custom jobs CSV path.
+     *
+     * @param filePath path to the jobs CSV file
+     */
     public JobRepository(String filePath) {
         this.filePath = filePath;
     }
 
-    // �����ã����� Path ���ͣ���������� @TempDir��
-    public JobRepository(java.nio.file.Path path) {
+    /**
+     * Creates a repository using a custom jobs CSV path.
+     *
+     * @param path path to the jobs CSV file
+     */
+    public JobRepository(Path path) {
         this.filePath = path.toString();
     }
+
+    /**
+     * Loads every job from CSV storage.
+     *
+     * @return list of jobs
+     * @throws Exception if the file cannot be read
+     */
     public List<Job> loadAll() throws Exception {
         List<Job> jobs = new ArrayList<>();
         File file = new File(filePath);
@@ -47,9 +70,15 @@ public class JobRepository {
         return jobs;
     }
 
+    /**
+     * Rewrites CSV storage with the provided jobs.
+     *
+     * @param jobs jobs to persist
+     * @throws Exception if the file cannot be written
+     */
     public void saveAll(List<Job> jobs) throws Exception {
-        File dir = new File("data");
-        if (!dir.exists()) dir.mkdir();
+        File dir = new File(filePath).getParentFile();
+        if (dir != null && !dir.exists()) dir.mkdirs();
         try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {
             writer.writeNext(new String[]{
                     "jobId", "courseName", "positionType", "weeklyWorkload",

@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Calculates deterministic skill matching between TA applicant profiles and job requirements.
+ */
 public class SkillMatchService {
 
     private static final Map<String, List<String>> SKILL_KEYWORDS = new LinkedHashMap<>();
@@ -23,6 +26,13 @@ public class SkillMatchService {
         SKILL_KEYWORDS.put("Office", List.of("office", "excel", "word", "powerpoint"));
     }
 
+    /**
+     * Compares an applicant's skill tags with a job's skill requirements.
+     *
+     * @param applicant applicant profile to evaluate
+     * @param job job requirement source
+     * @return match result including score, matched skills, missing skills, and recommendation
+     */
     public SkillMatchResult match(Applicant applicant, Job job) {
         Set<String> applicantSkills = normalizeApplicantSkills(applicant == null ? null : applicant.getSkillTags());
         Set<String> requiredSkills = normalizeJobSkills(job == null ? null : job.getSkillRequirements());

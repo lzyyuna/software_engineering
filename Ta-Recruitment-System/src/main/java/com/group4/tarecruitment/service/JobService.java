@@ -13,21 +13,38 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Provides TA-facing job listing, application submission, and application history operations.
+ */
 public class JobService {
     private final JobRepository jobRepo;
     private final ApplicationRepository appRepo;
 
+    /**
+     * Creates a service using the default job and application data files.
+     */
     public JobService() {
         this.jobRepo = new JobRepository();
         this.appRepo = new ApplicationRepository();
     }
 
+    /**
+     * Creates a service using custom job and application storage paths.
+     *
+     * @param jobsPath path to the jobs CSV file
+     * @param appsPath path to the applications CSV file
+     */
     public JobService(Path jobsPath, Path appsPath) {
         this.jobRepo = new JobRepository(jobsPath);
         this.appRepo = new ApplicationRepository(appsPath);
     }
 
-    // TA-003: 获取所有 Recruiting 状态的岗位，按发布时间倒序
+    /**
+     * Loads all recruiting jobs sorted by release time in descending order.
+     *
+     * @return active recruiting jobs
+     * @throws Exception if job storage cannot be read
+     */
     public List<Job> getActiveJobs() throws Exception {
         return jobRepo.loadAll().stream()
                 .filter(j -> "Recruiting".equals(j.getStatus()))
@@ -35,7 +52,14 @@ public class JobService {
                 .collect(Collectors.toList());
     }
 
-    // TA-004: 提交申请
+    /**
+     * Submits a TA application for a job unless the applicant has already applied.
+     *
+     * @param taId applicant TA identifier
+     * @param jobId target job identifier
+     * @return generated application ID, or null when a duplicate application exists
+     * @throws Exception if application storage cannot be updated
+     */
     public String submitApplication(String taId, String jobId) throws Exception {
         if (hasApplied(taId, jobId)) {
             return null;
@@ -48,6 +72,14 @@ public class JobService {
         return appId;
     }
 
+    /**
+     * Checks whether a TA has already applied for a job.
+     *
+     * @param taId applicant TA identifier
+     * @param jobId target job identifier
+     * @return true when an application already exists
+     * @throws Exception if application storage cannot be read
+     */
     public boolean hasApplied(String taId, String jobId) throws Exception {
         if (taId == null || jobId == null) {
             return false;
@@ -57,7 +89,13 @@ public class JobService {
                 .anyMatch(a -> taId.equals(a.getTaId()) && jobId.equals(a.getJobId()));
     }
 
-    // TA-005: 获取当前 TA 的所有申请记录，按申请时间倒序
+    /**
+     * Loads all applications submitted by a TA sorted by application time in descending order.
+     *
+     * @param taId applicant TA identifier
+     * @return applications submitted by the TA
+     * @throws Exception if application storage cannot be read
+     */
     public List<Application> getMyApplications(String taId) throws Exception {
         return appRepo.loadAll().stream()
                 .filter(a -> a.getTaId().equals(taId))
@@ -65,7 +103,13 @@ public class JobService {
                 .collect(Collectors.toList());
     }
 
-    // 根据 jobId 获取岗位详情
+    /**
+     * Finds a job by ID.
+     *
+     * @param jobId job identifier
+     * @return matching job, or null when not found
+     * @throws Exception if job storage cannot be read
+     */
     public Job getJobById(String jobId) throws Exception {
         return jobRepo.loadAll().stream()
                 .filter(j -> j.getJobId().equals(jobId))

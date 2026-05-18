@@ -10,6 +10,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Builds the main dashboard for logged-in TA users.
+ */
 public class TAHomeView {
 
     private final Stage stage;
@@ -20,6 +23,11 @@ public class TAHomeView {
         this.applicant = applicant;
     }
 
+    /**
+     * Creates the TA dashboard page with navigation to profile, resume, and job list pages.
+     *
+     * @return dashboard root node
+     */
     public Parent createContent() {
         Label title = new Label("TA Dashboard");
         title.getStyleClass().add("page-title");

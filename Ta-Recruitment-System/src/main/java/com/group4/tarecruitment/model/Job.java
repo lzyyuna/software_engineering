@@ -2,6 +2,9 @@ package com.group4.tarecruitment.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * Represents a TA recruitment position posted by an MO.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Job {
     private String jobId;
@@ -10,16 +13,34 @@ public class Job {
     private int weeklyWorkload;
     private String moName;
     private String moEmail;
-    private String status; // Recruiting / Closed
+    private String status;
     private String releaseTime;
     private String skillRequirements;
     private String jobContent;
     private String deadline;
-    private String department; // Added for AD-003
+    private String department;
 
-    // 无参构造 + 全参构造 + get/set 方法（和 Applicant 格式保持一致）
+    /**
+     * Creates an empty job for CSV and JSON deserialization.
+     */
     public Job() {}
 
+    /**
+     * Creates a complete job record.
+     *
+     * @param jobId generated job identifier
+     * @param courseName course name
+     * @param positionType type of TA position
+     * @param weeklyWorkload expected weekly workload in hours
+     * @param moName responsible MO name
+     * @param moEmail responsible MO email
+     * @param status job status such as Recruiting or Closed
+     * @param releaseTime job release timestamp
+     * @param skillRequirements required skills for matching
+     * @param jobContent description of TA responsibilities
+     * @param deadline application deadline
+     * @param department department that owns the position
+     */
     public Job(String jobId, String courseName, String positionType, int weeklyWorkload,
                String moName, String moEmail, String status, String releaseTime, String skillRequirements,
                String jobContent, String deadline, String department) {
@@ -37,14 +58,28 @@ public class Job {
         this.department = department;
     }
 
-    // Compatibility constructor
+    /**
+     * Creates a job record with the default department value.
+     *
+     * @param jobId generated job identifier
+     * @param courseName course name
+     * @param positionType type of TA position
+     * @param weeklyWorkload expected weekly workload in hours
+     * @param moName responsible MO name
+     * @param moEmail responsible MO email
+     * @param status job status such as Recruiting or Closed
+     * @param releaseTime job release timestamp
+     * @param skillRequirements required skills for matching
+     * @param jobContent description of TA responsibilities
+     * @param deadline application deadline
+     */
     public Job(String jobId, String courseName, String positionType, int weeklyWorkload,
                String moName, String moEmail, String status, String releaseTime, String skillRequirements,
                String jobContent, String deadline) {
-        this(jobId, courseName, positionType, weeklyWorkload, moName, moEmail, status, releaseTime, skillRequirements, jobContent, deadline, "General/Others");
+        this(jobId, courseName, positionType, weeklyWorkload, moName, moEmail, status,
+                releaseTime, skillRequirements, jobContent, deadline, "General/Others");
     }
 
-    // 生成所有 getter 和 setter
     public String getJobId() { return jobId; }
     public void setJobId(String jobId) { this.jobId = jobId; }
     public String getCourseName() { return courseName; }

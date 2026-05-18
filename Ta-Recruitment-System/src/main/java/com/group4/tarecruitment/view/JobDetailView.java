@@ -28,6 +28,9 @@ import javafx.stage.Stage;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Builds the TA-facing job detail page, including skill matching and application submission.
+ */
 public class JobDetailView {
     private final Stage stage;
     private final Applicant applicant;
@@ -41,6 +44,11 @@ public class JobDetailView {
         this.job = job;
     }
 
+    /**
+     * Creates the job detail page for the selected job.
+     *
+     * @return job detail root node
+     */
     public Parent createContent() {
         Label title = new Label("Job Details");
         title.setFont(new Font(18));

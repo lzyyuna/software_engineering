@@ -17,6 +17,9 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
+/**
+ * Builds the TA application history page.
+ */
 public class MyApplicationView {
     private final Stage stage;
     private final Applicant applicant;
@@ -27,6 +30,11 @@ public class MyApplicationView {
         this.applicant = applicant;
     }
 
+    /**
+     * Creates the application history page.
+     *
+     * @return application history root node
+     */
     public Parent createContent() {
         Label title = new Label("My Applications");
         title.setFont(new Font(18));

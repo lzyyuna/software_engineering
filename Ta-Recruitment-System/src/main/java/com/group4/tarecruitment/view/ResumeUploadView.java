@@ -13,6 +13,9 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
+/**
+ * Builds the TA resume management page for upload, replacement, and preview.
+ */
 public class ResumeUploadView {
     private final Applicant applicant;
     private final Stage stage;
@@ -23,6 +26,11 @@ public class ResumeUploadView {
         this.stage = stage;
     }
 
+    /**
+     * Creates the resume upload page.
+     *
+     * @return resume upload root node
+     */
     public Parent createContent() {
         Label title = new Label("📎 Upload Resume");
         title.setFont(new Font(22));

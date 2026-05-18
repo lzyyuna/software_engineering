@@ -11,23 +11,46 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Persists TA applicant profiles in CSV format.
+ */
 public class ApplicantCsvRepository {
     private final String filePath;
 
+    /**
+     * Creates a repository using the default applicant CSV file.
+     */
     public ApplicantCsvRepository() {
         this.filePath = "data/applicants.csv";
     }
 
+    /**
+     * Creates a repository using a custom CSV path.
+     *
+     * @param path path to the applicant CSV file
+     */
     public ApplicantCsvRepository(Path path) {
         this.filePath = path.toString();
     }
 
+    /**
+     * Appends an applicant to CSV storage.
+     *
+     * @param applicant applicant to save
+     * @throws Exception if the file cannot be read or written
+     */
     public void save(Applicant applicant) throws Exception {
         List<Applicant> applicants = loadAll();
         applicants.add(applicant);
         saveAll(applicants);
     }
 
+    /**
+     * Loads every applicant from CSV storage.
+     *
+     * @return list of applicants
+     * @throws Exception if the file cannot be read
+     */
     public List<Applicant> loadAll() throws Exception {
         List<Applicant> applicants = new ArrayList<>();
         File file = new File(filePath);
@@ -55,6 +78,12 @@ public class ApplicantCsvRepository {
         return applicants;
     }
 
+    /**
+     * Rewrites CSV storage with the provided applicants.
+     *
+     * @param applicants applicants to persist
+     * @throws Exception if the file cannot be written
+     */
     public void saveAll(List<Applicant> applicants) throws Exception {
         File dir = new File(filePath).getParentFile();
         if (dir != null && !dir.exists()) dir.mkdirs();
@@ -77,6 +106,12 @@ public class ApplicantCsvRepository {
         }
     }
 
+    /**
+     * Updates an applicant matched by TA ID.
+     *
+     * @param updatedApplicant applicant containing new values
+     * @throws Exception if the file cannot be read or written
+     */
     public void update(Applicant updatedApplicant) throws Exception {
         List<Applicant> applicants = loadAll();
         for (int i = 0; i < applicants.size(); i++) {
@@ -88,6 +123,13 @@ public class ApplicantCsvRepository {
         }
     }
 
+    /**
+     * Finds an applicant by login username.
+     *
+     * @param username login account username
+     * @return matching applicant, or null when not found
+     * @throws Exception if the file cannot be read
+     */
     public Applicant findByUsername(String username) throws Exception {
         for (Applicant a : loadAll()) {
             if (username.equals(a.getUsername())) return a;
@@ -95,6 +137,13 @@ public class ApplicantCsvRepository {
         return null;
     }
 
+    /**
+     * Finds an applicant by student ID.
+     *
+     * @param studentId student identifier
+     * @return matching applicant, or null when not found
+     * @throws Exception if the file cannot be read
+     */
     public Applicant findByStudentId(String studentId) throws Exception {
         for (Applicant a : loadAll()) {
             if (studentId.equals(a.getStudentId())) return a;
@@ -102,6 +151,13 @@ public class ApplicantCsvRepository {
         return null;
     }
 
+    /**
+     * Finds an applicant by TA ID.
+     *
+     * @param taId TA identifier
+     * @return matching applicant, or null when not found
+     * @throws Exception if the file cannot be read
+     */
     public Applicant findById(String taId) throws Exception {
         for (Applicant a : loadAll()) {
             if (taId.equals(a.getTaId())) return a;

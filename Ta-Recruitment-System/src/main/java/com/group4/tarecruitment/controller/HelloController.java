@@ -2,8 +2,7 @@ package com.group4.tarecruitment.controller;
 
 import com.group4.tarecruitment.model.Applicant;
 import com.group4.tarecruitment.service.ApplicantService;
-import com.group4.tarecruitment.view.ProfileDetailView;
-import com.group4.tarecruitment.view.TAHomeView;  // ✅ 新增：导入TAHomeView
+import com.group4.tarecruitment.view.TAHomeView;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -12,14 +11,39 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
+/**
+ * Handles TA profile creation and profile editing actions from the JavaFX forms.
+ */
 public class HelloController {
     private final ApplicantService applicantService = new ApplicantService();
     private String currentLoginUsername;
 
+    /**
+     * Stores the username that was authenticated before the TA profile is created.
+     *
+     * @param username authenticated account name
+     */
     public void setCurrentLoginUsername(String username) {
         this.currentLoginUsername = username;
     }
 
+    /**
+     * Creates a TA applicant profile from form controls and navigates to the TA dashboard
+     * after the profile is saved.
+     *
+     * @param studentIdField field containing the student ID
+     * @param nameField field containing the applicant name
+     * @param emailField field containing the applicant email
+     * @param coursesField field containing available teaching courses
+     * @param cbJava Java skill checkbox
+     * @param cbEnglish English skill checkbox
+     * @param cbTeaching teaching skill checkbox
+     * @param cbPython Python skill checkbox
+     * @param cbOffice Office skill checkbox
+     * @param contactField field containing contact number
+     * @param resultLabel label used to display validation or save results
+     * @param submitBtn submit button used to resolve the current stage
+     */
     public void createProfile(TextField studentIdField, TextField nameField, TextField emailField,
                               TextField coursesField, CheckBox cbJava, CheckBox cbEnglish,
                               CheckBox cbTeaching, CheckBox cbPython, CheckBox cbOffice,
@@ -78,7 +102,6 @@ public class HelloController {
             applicantService.addApplicant(applicant);
 
             Stage stage = (Stage) submitBtn.getScene().getWindow();
-            // ✅ 修正：跳转到TAHomeView（TA Dashboard）
             TAHomeView taHomeView = new TAHomeView(stage, applicant);
             stage.getScene().setRoot(taHomeView.createContent());
             stage.setTitle("TA Dashboard");
@@ -90,6 +113,21 @@ public class HelloController {
         }
     }
 
+    /**
+     * Updates an existing TA profile based on form input.
+     *
+     * @param studentIdField field used to locate the existing applicant
+     * @param nameField optional new applicant name
+     * @param emailField optional new applicant email
+     * @param coursesField optional new available courses
+     * @param cbJava Java skill checkbox
+     * @param cbEnglish English skill checkbox
+     * @param cbTeaching teaching skill checkbox
+     * @param cbPython Python skill checkbox
+     * @param cbOffice Office skill checkbox
+     * @param contactField optional new contact number
+     * @param resultLabel label used to display update results
+     */
     public void editProfile(TextField studentIdField, TextField nameField, TextField emailField,
                             TextField coursesField, CheckBox cbJava, CheckBox cbEnglish,
                             CheckBox cbTeaching, CheckBox cbPython, CheckBox cbOffice,

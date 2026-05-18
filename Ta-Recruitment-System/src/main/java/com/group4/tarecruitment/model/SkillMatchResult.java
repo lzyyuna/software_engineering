@@ -3,6 +3,9 @@ package com.group4.tarecruitment.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Stores the calculated skill match between a TA applicant and a job.
+ */
 public class SkillMatchResult {
     private String jobId;
     private String applicantTaId;
@@ -12,9 +15,22 @@ public class SkillMatchResult {
     private String recommendationLevel;
     private String aiExplanation;
 
-    public SkillMatchResult() {
-    }
+    /**
+     * Creates an empty skill match result.
+     */
+    public SkillMatchResult() {}
 
+    /**
+     * Creates a complete skill match result.
+     *
+     * @param jobId target job identifier
+     * @param applicantTaId applicant TA identifier
+     * @param matchScore percentage match score
+     * @param matchedSkills required skills found in the applicant profile
+     * @param missingSkills required skills not found in the applicant profile
+     * @param recommendationLevel recommendation label based on the score
+     * @param aiExplanation optional AI-generated explanation
+     */
     public SkillMatchResult(String jobId, String applicantTaId, double matchScore,
                             List<String> matchedSkills, List<String> missingSkills,
                             String recommendationLevel, String aiExplanation) {

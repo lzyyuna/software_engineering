@@ -2,17 +2,33 @@ package com.group4.tarecruitment.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * Represents one TA application submitted for a specific job.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Application {
     private String applicationId;
     private String taId;
     private String jobId;
     private String applicationTime;
-    private String status; // Pending / Approved / Rejected
-    private String reviewComment; // 最多50字
+    private String status;
+    private String reviewComment;
 
+    /**
+     * Creates an empty application for CSV and JSON deserialization.
+     */
     public Application() {}
 
+    /**
+     * Creates a complete application record.
+     *
+     * @param applicationId generated application identifier
+     * @param taId TA identifier of the applicant
+     * @param jobId target job identifier
+     * @param applicationTime submission timestamp
+     * @param status review status such as Pending, Approved, or Rejected
+     * @param reviewComment optional MO review comment
+     */
     public Application(String applicationId, String taId, String jobId,
                        String applicationTime, String status, String reviewComment) {
         this.applicationId = applicationId;
@@ -23,7 +39,6 @@ public class Application {
         this.reviewComment = reviewComment;
     }
 
-    // get/set 方法
     public String getApplicationId() { return applicationId; }
     public void setApplicationId(String applicationId) { this.applicationId = applicationId; }
     public String getTaId() { return taId; }

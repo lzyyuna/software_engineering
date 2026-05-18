@@ -20,6 +20,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Builds the login and registration page for TA, MO, and Admin users.
+ */
 public class RoleSelectView {
     private final Stage stage;
     private AdminController adminController;
@@ -29,6 +32,11 @@ public class RoleSelectView {
         this.stage = stage;
     }
 
+    /**
+     * Creates the role selection, login, and registration page.
+     *
+     * @return role selection root node
+     */
     public Parent createContent() {
         Label pageTitle = new Label("International School Teaching Assistant Recruitment");
         pageTitle.getStyleClass().add("login-title");
@@ -71,7 +79,6 @@ public class RoleSelectView {
         inviteField.getStyleClass().add("login-input");
         inviteField.setMaxWidth(Double.MAX_VALUE);
 
-        // Show invite code field only for TA and MO
         inviteLabel.setVisible(true);
         inviteLabel.setManaged(true);
         inviteField.setVisible(true);

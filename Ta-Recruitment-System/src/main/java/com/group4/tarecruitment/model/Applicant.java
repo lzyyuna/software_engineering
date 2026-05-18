@@ -2,6 +2,10 @@ package com.group4.tarecruitment.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * Represents a TA applicant profile used for login binding, job matching,
+ * applications, and resume management.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Applicant {
     private String taId;
@@ -13,11 +17,24 @@ public class Applicant {
     private String contact;
     private String password;
     private String resumePath;
-    private String username; // 新增：绑定登录账号
+    private String username;
 
+    /**
+     * Creates an empty applicant for CSV and JSON deserialization.
+     */
     public Applicant() {}
 
-    // 保留原有构造器
+    /**
+     * Creates an applicant profile without an account username binding.
+     *
+     * @param taId generated TA identifier
+     * @param studentId student identifier
+     * @param name applicant name
+     * @param email applicant email
+     * @param courses courses the applicant can support
+     * @param skillTags comma-separated skill tags
+     * @param contact contact number
+     */
     public Applicant(String taId, String studentId, String name, String email,
                      String courses, String skillTags, String contact) {
         this.taId = taId;
@@ -31,7 +48,18 @@ public class Applicant {
         this.resumePath = "";
     }
 
-    // 新增：带 username 的构造器
+    /**
+     * Creates an applicant profile bound to a login username.
+     *
+     * @param taId generated TA identifier
+     * @param studentId student identifier
+     * @param name applicant name
+     * @param email applicant email
+     * @param courses courses the applicant can support
+     * @param skillTags comma-separated skill tags
+     * @param contact contact number
+     * @param username login account username
+     */
     public Applicant(String taId, String studentId, String name, String email,
                      String courses, String skillTags, String contact, String username) {
         this.taId = taId;
@@ -46,7 +74,6 @@ public class Applicant {
         this.username = username;
     }
 
-    // 补全所有 getter/setter
     public String getTaId() { return taId; }
     public void setTaId(String taId) { this.taId = taId; }
 
@@ -77,7 +104,6 @@ public class Applicant {
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 
-    // 别名方法，用于兼容不同命名
     public String getPhone() { return contact; }
     public String getSkills() { return skillTags; }
     public String getCvPath() { return resumePath; }

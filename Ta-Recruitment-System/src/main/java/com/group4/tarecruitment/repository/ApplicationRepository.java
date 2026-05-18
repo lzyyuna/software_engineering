@@ -11,26 +11,49 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Persists TA job application records in CSV format.
+ */
 public class ApplicationRepository {
     private final String filePath;
 
+    /**
+     * Creates a repository using the default applications CSV file.
+     */
     public ApplicationRepository() {
         this.filePath = "data/applications.csv";
     }
 
+    /**
+     * Creates a repository using a custom applications CSV path.
+     *
+     * @param path path to the applications CSV file
+     */
     public ApplicationRepository(Path path) {
         this.filePath = path.toString();
     }
 
+    /**
+     * Appends an application record to CSV storage.
+     *
+     * @param app application to save
+     * @throws Exception if the file cannot be read or written
+     */
     public void save(Application app) throws Exception {
         List<Application> apps = loadAll();
         apps.add(app);
         saveAll(apps);
     }
 
+    /**
+     * Loads every application from CSV storage.
+     *
+     * @return list of application records
+     * @throws Exception if the file cannot be read
+     */
     public List<Application> loadAll() throws Exception {
         List<Application> apps = new ArrayList<>();
-        File file = new File(filePath);          // ÐÞ¸´£ºFILE_PATH ¡ú filePath
+        File file = new File(filePath);
         if (!file.exists()) return apps;
 
         try (CSVReader reader = new CSVReader(new FileReader(file))) {
@@ -47,10 +70,16 @@ public class ApplicationRepository {
         return apps;
     }
 
+    /**
+     * Rewrites CSV storage with the provided applications.
+     *
+     * @param apps applications to persist
+     * @throws Exception if the file cannot be written
+     */
     public void saveAll(List<Application> apps) throws Exception {
-        File dir = new File(filePath).getParentFile();   // ÐÞ¸´£ºÓÃ filePath ÍÆµ¼Ä¿Â¼
+        File dir = new File(filePath).getParentFile();
         if (dir != null && !dir.exists()) dir.mkdirs();
-        try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {  // ÐÞ¸´£ºFILE_PATH ¡ú filePath
+        try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {
             writer.writeNext(new String[]{
                     "applicationId", "taId", "jobId", "applicationTime", "status", "reviewComment"
             });

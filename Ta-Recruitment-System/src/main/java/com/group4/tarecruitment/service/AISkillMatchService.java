@@ -17,6 +17,9 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Properties;
 
+/**
+ * Calls the DeepSeek chat API to produce a concise TA-job fit explanation.
+ */
 public class AISkillMatchService {
 
     private static final String API_URL = "https://api.deepseek.com/chat/completions";
@@ -26,6 +29,11 @@ public class AISkillMatchService {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Creates an AI skill match service with the provided API key.
+     *
+     * @param apiKey DeepSeek API key
+     */
     public AISkillMatchService(String apiKey) {
         this.apiKey = apiKey;
         this.httpClient = HttpClient.newBuilder()
@@ -34,6 +42,15 @@ public class AISkillMatchService {
         this.objectMapper = new ObjectMapper();
     }
 
+    /**
+     * Generates an AI explanation for an applicant's match against a job.
+     *
+     * @param applicant applicant profile
+     * @param job job being evaluated
+     * @param result deterministic match result used as structured context
+     * @return AI-generated fit analysis
+     * @throws Exception if the API request fails or returns an error
+     */
     public String analyzeSkillMatch(Applicant applicant, Job job, SkillMatchResult result) throws Exception {
         String prompt = buildPrompt(applicant, job, result);
 
@@ -118,6 +135,11 @@ public class AISkillMatchService {
         return s == null ? "" : s;
     }
 
+    /**
+     * Resolves the DeepSeek API key from environment variables or local config files.
+     *
+     * @return configured API key, or null when no key is available
+     */
     public static String getApiKeyFromEnv() {
         String key = System.getenv("DEEPSEEK_API_KEY");
         if (key != null && !key.isBlank()) return key;

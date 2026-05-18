@@ -15,6 +15,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.control.ScrollPane;
 
+/**
+ * Builds the TA profile detail and profile edit pages.
+ */
 public class ProfileDetailView {
     private final Applicant applicant;
     private final Stage stage;
@@ -25,11 +28,15 @@ public class ProfileDetailView {
         this.stage = stage;
     }
 
+    /**
+     * Creates the default profile display page.
+     *
+     * @return profile display root node
+     */
     public Parent getView() {
         return createDisplayView();
     }
 
-    // ===================== Display Mode =====================
     private Parent createDisplayView() {
         Label title = new Label("Profile Details");
         title.setFont(new Font(22));
@@ -102,7 +109,6 @@ public class ProfileDetailView {
         return root;
     }
 
-    // ===================== Edit Mode =====================
     private Parent createEditView() {
         Label title = new Label("Profile Details");
         title.setFont(new Font(22));
@@ -378,7 +384,6 @@ public class ProfileDetailView {
         return scrollPane;
     }
 
-    // ===================== Helper Method =====================
     private void addInfoRow(GridPane grid, int row, String labelText, String valueText, String labelStyle, String valueStyle) {
         Label label = new Label(labelText);
         label.setStyle(labelStyle);

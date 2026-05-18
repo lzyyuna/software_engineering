@@ -14,6 +14,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Builds the first-time TA profile creation page.
+ */
 public class HelloView {
     private final Stage stage;
     private final HelloController controller;
@@ -24,10 +27,20 @@ public class HelloView {
         this.controller = new HelloController();
     }
 
+    /**
+     * Stores the username associated with the profile being created.
+     *
+     * @param username authenticated account username
+     */
     public void setLoginUsername(String username) {
         this.loginUsername = username;
     }
 
+    /**
+     * Creates the TA profile form page.
+     *
+     * @return profile creation root node
+     */
     public Parent createContent() {
         VBox pageRoot = new VBox(18);
         pageRoot.getStyleClass().add("form-page");

@@ -18,6 +18,9 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Builds the TA-facing list of recruiting jobs with filters, pagination, and skill matching.
+ */
 public class JobListView {
     private final Stage stage;
     private final Applicant applicant;
@@ -26,8 +29,6 @@ public class JobListView {
 
     private final int PAGE_SIZE = 3;
     private int currentPage = 1;
-
-    // 当前页使用的过滤控件
     private CheckBox javaCb;
     private CheckBox englishCb;
     private CheckBox teachingCb;
@@ -41,6 +42,11 @@ public class JobListView {
         this.applicant = applicant;
     }
 
+    /**
+     * Creates the available jobs page.
+     *
+     * @return job list root node
+     */
     public Parent createContent() {
         Label title = new Label("Available TA Positions");
         title.setFont(new Font(18));
@@ -57,8 +63,6 @@ public class JobListView {
 
         HBox topBar = new HBox(10, refreshBtn, myAppsBtn, backToHomeBtn);
         topBar.setAlignment(Pos.CENTER_LEFT);
-
-        // ===================== Filter Bar =====================
         javaCb = new CheckBox("Java");
         englishCb = new CheckBox("English");
         teachingCb = new CheckBox("Teaching");
@@ -146,8 +150,6 @@ public class JobListView {
                 ex.printStackTrace();
             }
         });
-
-        // 实时刷新
         javaCb.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
         englishCb.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
         teachingCb.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
@@ -155,8 +157,6 @@ public class JobListView {
         officeCb.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
         strongOnlyCb.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
         typeCombo.setOnAction(e -> refreshFilteredJobs(jobListBox, pageLabel));
-
-        // Reset
         resetBtn.setOnAction(e -> {
             javaCb.setSelected(false);
             englishCb.setSelected(false);
@@ -197,8 +197,6 @@ public class JobListView {
                 filteredJobs.add(job);
             }
         }
-
-        // 按匹配度从高到低排序
         filteredJobs.sort((j1, j2) -> {
             double s1 = skillMatchService.match(applicant, j1).getMatchScore();
             double s2 = skillMatchService.match(applicant, j2).getMatchScore();
@@ -212,8 +210,6 @@ public class JobListView {
         String skillRequirements = job.getSkillRequirements() == null
                 ? ""
                 : job.getSkillRequirements().toLowerCase();
-
-        // 多选技能标签：叠加过滤（AND）
         if (javaCb.isSelected() && !skillRequirements.contains("java")) {
             return false;
         }
@@ -229,8 +225,6 @@ public class JobListView {
         if (officeCb.isSelected() && !skillRequirements.contains("office")) {
             return false;
         }
-
-        // 单选岗位类型
         if (strongOnlyCb.isSelected()) {
             SkillMatchResult match = skillMatchService.match(applicant, job);
             if (!"Strong Match".equals(match.getRecommendationLevel())) {
@@ -388,3 +382,4 @@ public class JobListView {
                 + "-fx-padding: 4 10;";
     }
 }
+
