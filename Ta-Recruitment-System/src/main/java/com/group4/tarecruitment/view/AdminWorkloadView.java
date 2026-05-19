@@ -4,6 +4,7 @@ import com.group4.tarecruitment.model.Admin;
 import com.group4.tarecruitment.service.AIWorkloadService;
 import com.group4.tarecruitment.service.AdminService;
 import com.group4.tarecruitment.service.AdminServiceImpl;
+import com.group4.tarecruitment.util.ThemeManager;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,14 +15,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -81,47 +80,49 @@ public class AdminWorkloadView {
         tabPane.getTabs().addAll(workloadTab, statsTab);
 
         VBox root = new VBox(tabPane);
-        root.setStyle("-fx-background-color: #f5f6fa;");
+        root.getStyleClass().add("app-page");
         return root;
     }
 
     private Parent createWorkloadTab() {
-        VBox root = new VBox(15);
-        root.setPadding(new Insets(20));
+        VBox root = new VBox(16);
+        root.setPadding(new Insets(24));
+        root.getStyleClass().add("app-page");
 
         Label mainTitle = new Label("TA Workload Overview");
-        mainTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        mainTitle.getStyleClass().add("page-title");
 
-        HBox headerButtonsBox = new HBox(15);
+        HBox headerButtonsBox = new HBox(10);
         headerButtonsBox.setAlignment(Pos.CENTER_LEFT);
+        headerButtonsBox.getStyleClass().add("toolbar");
 
         Button backBtn = new Button("Back to Dashboard");
-        backBtn.setStyle("-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;");
+        backBtn.getStyleClass().add("btn-success");
 
         Button refreshBtn = new Button("Refresh");
-        refreshBtn.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;");
+        refreshBtn.getStyleClass().add("btn-warning");
 
         Button exportBtn = new Button("Export CSV");
-        exportBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;");
+        exportBtn.getStyleClass().add("btn-info");
 
         Button aiAnalysisBtn = new Button("AI Analysis");
-        aiAnalysisBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;");
+        aiAnalysisBtn.getStyleClass().add("btn-danger");
 
         Label thresholdLabel = new Label("Weekly Threshold:");
-        thresholdLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #34495e;");
+        thresholdLabel.getStyleClass().add("login-label");
         TextField thresholdInput = new TextField(String.valueOf(currentThreshold));
-        thresholdInput.setPrefWidth(60);
+        thresholdInput.setPrefWidth(70);
         Button setThresholdBtn = new Button("Set Threshold");
-        setThresholdBtn.setStyle("-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;");
+        setThresholdBtn.getStyleClass().add("btn-purple");
 
-        headerButtonsBox.getChildren().addAll(refreshBtn, exportBtn, aiAnalysisBtn, setThresholdBtn, thresholdLabel, thresholdInput, backBtn);
+        headerButtonsBox.getChildren().addAll(refreshBtn, exportBtn, aiAnalysisBtn,
+                setThresholdBtn, thresholdLabel, thresholdInput, backBtn);
 
-        VBox whiteCard = new VBox(15);
-        whiteCard.setPadding(new Insets(20));
-        whiteCard.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+        VBox whiteCard = new VBox(14);
+        whiteCard.getStyleClass().add("surface-card");
         VBox.setVgrow(whiteCard, Priority.ALWAYS);
 
-        HBox filterBar = new HBox(15);
+        HBox filterBar = new HBox(12);
         filterBar.setAlignment(Pos.CENTER_LEFT);
 
         TextField taNameFilter = new TextField();
@@ -132,9 +133,9 @@ public class AdminWorkloadView {
         moFilter.setPromptText("Filter by Hiring MO");
 
         Button searchBtn = new Button("Search");
-        searchBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;");
+        searchBtn.getStyleClass().add("btn-info");
         Button clearBtn = new Button("Clear Filters");
-        clearBtn.setStyle("-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;");
+        clearBtn.getStyleClass().add("btn-muted");
 
         filterBar.getChildren().addAll(taNameFilter, courseFilter, moFilter, searchBtn, clearBtn);
 
@@ -202,7 +203,7 @@ public class AdminWorkloadView {
             if (file != null) {
                 try {
                     adminService.exportTaWorkloadData(filteredData, file.getAbsolutePath());
-                    showAlert("Success", "Export successful!");
+                    showAlert("Success", "Export successful.");
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     showAlert("Error", "Export failed: " + ex.getMessage());
@@ -264,9 +265,9 @@ public class AdminWorkloadView {
                 if (item == null || empty) {
                     setStyle("");
                 } else if (item.getExcessAmount() > 0) {
-                    setStyle("-fx-text-inner-color: #c0392b; -fx-font-weight: bold;");
+                    setStyle("-fx-text-inner-color: #b53e35; -fx-font-weight: bold;");
                 } else {
-                    setStyle("-fx-text-inner-color: black;");
+                    setStyle("");
                 }
             }
         });
@@ -300,23 +301,24 @@ public class AdminWorkloadView {
     }
 
     private Parent createStatsTab() {
-        VBox root = new VBox(15);
-        root.setPadding(new Insets(20));
+        VBox root = new VBox(16);
+        root.setPadding(new Insets(24));
+        root.getStyleClass().add("app-page");
 
         Label title = new Label("Workload Statistics");
-        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        title.getStyleClass().add("page-title");
 
-        HBox headerButtonsBox = new HBox(15);
+        HBox headerButtonsBox = new HBox(10);
         headerButtonsBox.setAlignment(Pos.CENTER_LEFT);
+        headerButtonsBox.getStyleClass().add("toolbar");
 
         Button exportStatsBtn = new Button("Export Statistics CSV");
-        exportStatsBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;");
+        exportStatsBtn.getStyleClass().add("btn-info");
 
         headerButtonsBox.getChildren().addAll(exportStatsBtn);
 
-        VBox whiteCard = new VBox(15);
-        whiteCard.setPadding(new Insets(20));
-        whiteCard.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+        VBox whiteCard = new VBox(14);
+        whiteCard.getStyleClass().add("surface-card");
         VBox.setVgrow(whiteCard, Priority.ALWAYS);
 
         HBox tablesBox = new HBox(20);
@@ -325,7 +327,7 @@ public class AdminWorkloadView {
 
         VBox courseBox = new VBox(10);
         Label courseLabel = new Label("By Course");
-        courseLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #34495e;");
+        courseLabel.getStyleClass().add("section-title");
         courseBox.getChildren().add(courseLabel);
         TableView<StatRow> courseTable = new TableView<>();
         courseTable.getColumns().addAll(
@@ -339,7 +341,7 @@ public class AdminWorkloadView {
 
         VBox deptBox = new VBox(10);
         Label deptLabel = new Label("By Department");
-        deptLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #34495e;");
+        deptLabel.getStyleClass().add("section-title");
         deptBox.getChildren().add(deptLabel);
         TableView<StatRow> deptTable = new TableView<>();
         deptTable.getColumns().addAll(
@@ -386,7 +388,7 @@ public class AdminWorkloadView {
                     for (StatRow r : deptStats.values()) {
                         pw.println("Department," + r.getName() + "," + r.getTotalTas() + "," + r.getTotalWorkload() + "," + r.getAvgWorkload());
                     }
-                    showAlert("Success", "Export successful!");
+                    showAlert("Success", "Export successful.");
                 } catch (Exception ex) {
                     showAlert("Error", "Export failed: " + ex.getMessage());
                 }
@@ -428,11 +430,10 @@ public class AdminWorkloadView {
         loadingStage.setTitle("AI Analysis");
         ProgressIndicator spinner = new ProgressIndicator();
         Label loadingLabel = new Label("Analyzing workload with AI...");
-        loadingLabel.setStyle("-fx-font-size: 14px;");
         VBox loadingBox = new VBox(15, spinner, loadingLabel);
         loadingBox.setAlignment(Pos.CENTER);
         loadingBox.setPadding(new Insets(30));
-        loadingStage.setScene(new Scene(loadingBox, 300, 150));
+        loadingStage.setScene(ThemeManager.createScene(loadingBox, 320, 160));
         loadingStage.show();
 
         Task<String> task = new Task<>() {
@@ -465,84 +466,63 @@ public class AdminWorkloadView {
         resultStage.initOwner(stage);
         resultStage.setTitle("AI Workload Analysis");
 
-        // ── Header bar ──────────────────────────────────────────────────────────
-        HBox header = new HBox(10);
-        header.setPadding(new Insets(16, 20, 16, 20));
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setStyle("-fx-background-color: #1a237e;");
         Label headerTitle = new Label("AI Workload Analysis");
-        headerTitle.setStyle("-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: white;");
-        header.getChildren().add(headerTitle);
+        headerTitle.getStyleClass().add("page-title");
 
-        // ── Parse sections from the structured response ──────────────────────
         Map<String, String> sections = parseSections(analysisResult);
 
-        // ── Verdict badge ────────────────────────────────────────────────────
+        // Verdict badge
         String verdictRaw = sections.getOrDefault("VERDICT", "").toUpperCase();
         String verdictText;
-        String verdictBg;
-        String verdictFg;
+        String badgeClass;
         if (verdictRaw.contains("CRITICAL")) {
-            verdictText = "CRITICAL";  verdictBg = "#fdecea"; verdictFg = "#c62828";
+            verdictText = "CRITICAL";  badgeClass = "badge-danger";
         } else if (verdictRaw.contains("NEEDS ATTENTION")) {
-            verdictText = "NEEDS ATTENTION"; verdictBg = "#fff8e1"; verdictFg = "#e65100";
+            verdictText = "NEEDS ATTENTION"; badgeClass = "badge-warning";
         } else if (verdictRaw.contains("ACCEPTABLE")) {
-            verdictText = "ACCEPTABLE"; verdictBg = "#e8f5e9"; verdictFg = "#2e7d32";
+            verdictText = "ACCEPTABLE"; badgeClass = "badge-success";
         } else {
             verdictText = verdictRaw.isEmpty() ? "" : verdictRaw;
-            verdictBg = "#f5f5f5"; verdictFg = "#37474f";
+            badgeClass = "badge-neutral";
         }
 
-        VBox verdictBanner = new VBox();
+        HBox bannerRow = new HBox();
         if (!verdictText.isEmpty()) {
             Label verdictLabel = new Label("Verdict: " + verdictText);
-            verdictLabel.setStyle(String.format(
-                "-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: %s;" +
-                "-fx-background-color: %s; -fx-padding: 8 16; -fx-background-radius: 4;",
-                verdictFg, verdictBg));
-            HBox bannerRow = new HBox(verdictLabel);
-            bannerRow.setPadding(new Insets(10, 16, 6, 16));
-            bannerRow.setStyle("-fx-background-color: #f5f6fa;");
-            verdictBanner.getChildren().add(bannerRow);
+            verdictLabel.getStyleClass().addAll("badge", badgeClass);
+            bannerRow.getChildren().add(verdictLabel);
+            bannerRow.setAlignment(Pos.CENTER_LEFT);
         }
 
-        // ── Section cards ────────────────────────────────────────────────────
         String[][] sectionDefs = {
-            {"ASSESSMENT", "Overall Assessment", "#1565c0"},
-            {"AT-RISK",    "At-Risk TAs",        "#b71c1c"},
-            {"ACTIONS",    "Recommended Actions", "#1b5e20"},
+            {"ASSESSMENT", "Overall Assessment"},
+            {"AT-RISK",    "At-Risk TAs"},
+            {"ACTIONS",    "Recommended Actions"},
         };
 
         VBox cardsBox = new VBox(12);
-        cardsBox.setPadding(new Insets(12, 16, 12, 16));
-        cardsBox.setStyle("-fx-background-color: #f5f6fa;");
 
         boolean anySectionFound = false;
         for (String[] def : sectionDefs) {
             String content = sections.get(def[0]);
             if (content == null || content.isBlank()) continue;
             anySectionFound = true;
-            cardsBox.getChildren().add(buildSectionCard(def[1], content, def[2]));
+            cardsBox.getChildren().add(buildSectionCard(def[1], content));
         }
 
-        // Fall back: if no sections were parsed, show raw text in a single card
         if (!anySectionFound) {
-            cardsBox.getChildren().add(buildSectionCard("Analysis", analysisResult, "#37474f"));
+            cardsBox.getChildren().add(buildSectionCard("Analysis", analysisResult));
         }
 
-        ScrollPane scrollPane = new ScrollPane(cardsBox);
+        VBox content = new VBox(14, headerTitle, bannerRow, cardsBox);
+        content.setPadding(new Insets(20));
+
+        ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background-color: #f5f6fa; -fx-background: #f5f6fa;");
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
-        // ── Footer buttons ───────────────────────────────────────────────────
-        HBox footer = new HBox(10);
-        footer.setPadding(new Insets(10, 16, 10, 16));
-        footer.setAlignment(Pos.CENTER_RIGHT);
-        footer.setStyle("-fx-background-color: #eceff1; -fx-border-color: #cfd8dc; -fx-border-width: 1 0 0 0;");
-
         Button copyBtn = new Button("Copy to Clipboard");
-        copyBtn.setStyle("-fx-background-color: #1565c0; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 7 14;");
+        copyBtn.getStyleClass().add("btn-info");
         copyBtn.setOnAction(e -> {
             Clipboard cb = Clipboard.getSystemClipboard();
             ClipboardContent cc = new ClipboardContent();
@@ -552,55 +532,35 @@ public class AdminWorkloadView {
         });
 
         Button closeBtn = new Button("Close");
-        closeBtn.setStyle("-fx-background-color: #546e7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 7 20;");
+        closeBtn.getStyleClass().add("btn-muted");
         closeBtn.setOnAction(e -> resultStage.close());
-        footer.getChildren().addAll(copyBtn, closeBtn);
 
-        // ── Assemble layout ──────────────────────────────────────────────────
-        VBox root = new VBox(header, verdictBanner, scrollPane, footer);
-        root.setStyle("-fx-background-color: #f5f6fa;");
+        HBox footer = new HBox(10, copyBtn, closeBtn);
+        footer.setPadding(new Insets(12, 20, 12, 20));
+        footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Scene scene = new Scene(root, 680, 560);
+        VBox root = new VBox(scrollPane, footer);
+        root.getStyleClass().add("app-page");
+
+        Scene scene = ThemeManager.createScene(root, 680, 560);
         resultStage.setScene(scene);
         resultStage.setMinWidth(480);
         resultStage.setMinHeight(360);
         resultStage.show();
     }
 
-    /** Builds a card with a colored left-border strip, a bold title, and body text. */
-    private VBox buildSectionCard(String title, String body, String accentColor) {
-        HBox card = new HBox();
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 6;" +
-                      "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.07), 6, 0, 0, 2);");
-
-        // Colored left strip
-        Rectangle strip = new Rectangle(5, 1);
-        strip.setFill(Color.web(accentColor));
-        strip.heightProperty().bind(card.heightProperty());
-        StackPane stripPane = new StackPane(strip);
-        stripPane.setStyle("-fx-background-color: " + accentColor + "; -fx-background-radius: 6 0 0 6;");
-        stripPane.setPrefWidth(5);
-        stripPane.setMinWidth(5);
-
-        VBox content = new VBox(6);
-        content.setPadding(new Insets(12, 14, 12, 14));
-        HBox.setHgrow(content, Priority.ALWAYS);
-
+    private VBox buildSectionCard(String title, String body) {
         Label titleLabel = new Label(title);
-        titleLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: " + accentColor + ";");
-
-        Separator sep = new Separator();
+        titleLabel.getStyleClass().add("section-title");
 
         Label bodyLabel = new Label(body);
         bodyLabel.setWrapText(true);
-        bodyLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #263238; -fx-line-spacing: 2;");
 
-        content.getChildren().addAll(titleLabel, sep, bodyLabel);
-        card.getChildren().addAll(stripPane, content);
-        return new VBox(card); // wrap in VBox so margins apply properly
+        VBox card = new VBox(8, titleLabel, new Separator(), bodyLabel);
+        card.getStyleClass().add("surface-card");
+        return card;
     }
 
-    /** Parses the structured AI response into a key→content map. */
     private Map<String, String> parseSections(String text) {
         Map<String, String> result = new LinkedHashMap<>();
         String[] keys = {"ASSESSMENT", "AT-RISK", "ACTIONS", "VERDICT"};

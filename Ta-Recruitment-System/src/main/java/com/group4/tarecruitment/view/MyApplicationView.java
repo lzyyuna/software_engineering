@@ -11,8 +11,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -30,31 +30,24 @@ public class MyApplicationView {
         this.applicant = applicant;
     }
 
-    /**
-     * Creates the application history page.
-     *
-     * @return application history root node
-     */
     public Parent createContent() {
         Label title = new Label("My Applications");
-        title.setFont(new Font(18));
-        title.setStyle("-fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        title.getStyleClass().add("page-title");
 
         Button refreshBtn = new Button("Refresh Status");
         Button backToListBtn = new Button("Back to Job List");
         Button backToHomeBtn = new Button("Back to TA Home");
 
-        String btnStyle = "-fx-font-size: 14px; -fx-padding: 7 14; -fx-background-radius: 5; -fx-font-weight: bold;";
-        refreshBtn.setStyle(btnStyle + "-fx-background-color: #3498db; -fx-text-fill: white;");
-        backToListBtn.setStyle(btnStyle + "-fx-background-color: #95a5a6; -fx-text-fill: white;");
-        backToHomeBtn.setStyle(btnStyle + "-fx-background-color: #2ecc71; -fx-text-fill: white;");
+        refreshBtn.getStyleClass().add("btn-primary");
+        backToListBtn.getStyleClass().add("btn-muted");
+        backToHomeBtn.getStyleClass().add("btn-success");
 
         HBox topBar = new HBox(10, refreshBtn, backToListBtn, backToHomeBtn);
         topBar.setAlignment(Pos.CENTER_LEFT);
+        topBar.getStyleClass().add("toolbar");
 
-        VBox appListBox = new VBox(10);
-        appListBox.setPadding(new Insets(15));
-        appListBox.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 8;");
+        VBox appListBox = new VBox(12);
+        appListBox.getStyleClass().add("list-container");
 
         loadApplications(appListBox);
 
@@ -72,9 +65,9 @@ public class MyApplicationView {
             stage.setTitle("TA Dashboard");
         });
 
-        VBox root = new VBox(15, title, topBar, appListBox);
-        root.setPadding(new Insets(25));
-        root.setStyle("-fx-background-color: #f5f6fa;");
+        VBox root = new VBox(16, title, topBar, appListBox);
+        root.getStyleClass().add("app-page");
+        root.setPadding(new Insets(28));
         return root;
     }
 
@@ -84,7 +77,7 @@ public class MyApplicationView {
             List<Application> apps = jobService.getMyApplications(applicant.getTaId());
             if (apps.isEmpty()) {
                 Label emptyLabel = new Label("No application records found.");
-                emptyLabel.setStyle("-fx-font-size: 15px; -fx-text-fill: #7f8c8d;");
+                emptyLabel.getStyleClass().add("empty-text");
                 appListBox.getChildren().add(emptyLabel);
                 return;
             }
@@ -92,33 +85,41 @@ public class MyApplicationView {
             for (Application app : apps) {
                 Job job = jobService.getJobById(app.getJobId());
 
-                HBox appItem = new HBox(15);
-                appItem.setAlignment(Pos.CENTER_LEFT);
-                appItem.setStyle("-fx-padding: 12; -fx-background-color: white; -fx-background-radius: 6; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4,0,0,1);");
+                Label courseLabel = new Label((job != null ? job.getCourseName() : "Unknown Position"));
+                courseLabel.getStyleClass().add("section-title");
 
-                Label courseLabel = new Label("Course: " + (job != null ? job.getCourseName() : "Unknown Position"));
-                Label timeLabel = new Label("Application Time: " + app.getApplicationTime());
-                Label statusLabel = new Label("Status: " + app.getStatus());
+                Label timeLabel = new Label("Applied: " + app.getApplicationTime());
+                timeLabel.getStyleClass().add("muted-text");
 
-                if ("Pending".equalsIgnoreCase(app.getStatus())) {
-                    statusLabel.setStyle("-fx-text-fill: #f39c12; -fx-font-weight: bold;");
-                } else if ("Approved".equalsIgnoreCase(app.getStatus())) {
-                    statusLabel.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
-                } else if ("Rejected".equalsIgnoreCase(app.getStatus())) {
-                    statusLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
-                }
+                Label statusLabel = new Label(app.getStatus());
+                statusLabel.getStyleClass().addAll("badge", statusBadgeClass(app.getStatus()));
 
                 Button detailBtn = new Button("View Details");
-                detailBtn.setStyle("-fx-font-size: 13px; -fx-padding: 6 12; -fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5;");
-
+                detailBtn.getStyleClass().add("btn-info");
                 detailBtn.setOnAction(e -> showAppDetail(app, job));
-                appItem.getChildren().addAll(courseLabel, timeLabel, statusLabel, detailBtn);
-                appListBox.getChildren().add(appItem);
+
+                HBox spacer = new HBox();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                HBox row = new HBox(14, courseLabel, timeLabel, spacer, statusLabel, detailBtn);
+                row.setAlignment(Pos.CENTER_LEFT);
+                row.getStyleClass().add("list-item-card");
+
+                appListBox.getChildren().add(row);
             }
         } catch (Exception e) {
-            appListBox.getChildren().add(new Label("Load failed: " + e.getMessage()));
+            Label err = new Label("Load failed: " + e.getMessage());
+            err.getStyleClass().add("status-error");
+            appListBox.getChildren().add(err);
             e.printStackTrace();
         }
+    }
+
+    private String statusBadgeClass(String status) {
+        if ("Approved".equalsIgnoreCase(status)) return "badge-success";
+        if ("Rejected".equalsIgnoreCase(status)) return "badge-danger";
+        if ("Pending".equalsIgnoreCase(status))  return "badge-warning";
+        return "badge-neutral";
     }
 
     private void showAppDetail(Application app, Job job) {
@@ -131,7 +132,7 @@ public class MyApplicationView {
                 : app.getReviewComment();
 
         String content = String.format(
-                "Application ID: %s\nPosition: %s\nApplication Time: %s\nStatus: %s\nReview Comment: %s",
+                "Application ID: %s%nPosition: %s%nApplication Time: %s%nStatus: %s%nReview Comment: %s",
                 app.getApplicationId(),
                 job != null ? job.getCourseName() : "Unknown Position",
                 app.getApplicationTime(),

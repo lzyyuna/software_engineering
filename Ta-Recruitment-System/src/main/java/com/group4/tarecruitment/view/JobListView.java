@@ -12,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -42,27 +41,22 @@ public class JobListView {
         this.applicant = applicant;
     }
 
-    /**
-     * Creates the available jobs page.
-     *
-     * @return job list root node
-     */
     public Parent createContent() {
         Label title = new Label("Available TA Positions");
-        title.setFont(new Font(18));
-        title.setStyle("-fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        title.getStyleClass().add("page-title");
 
         Button refreshBtn = new Button("Refresh List");
         Button myAppsBtn = new Button("My Applications");
         Button backToHomeBtn = new Button("Back to TA Home");
 
-        String btnStyle = "-fx-font-size: 14px; -fx-padding: 7 14; -fx-background-radius: 5; -fx-font-weight: bold;";
-        refreshBtn.setStyle(btnStyle + "-fx-background-color: #3498db; -fx-text-fill: white;");
-        myAppsBtn.setStyle(btnStyle + "-fx-background-color: #9b59b6; -fx-text-fill: white;");
-        backToHomeBtn.setStyle(btnStyle + "-fx-background-color: #2ecc71; -fx-text-fill: white;");
+        refreshBtn.getStyleClass().add("btn-primary");
+        myAppsBtn.getStyleClass().add("btn-purple");
+        backToHomeBtn.getStyleClass().add("btn-muted");
 
         HBox topBar = new HBox(10, refreshBtn, myAppsBtn, backToHomeBtn);
         topBar.setAlignment(Pos.CENTER_LEFT);
+        topBar.getStyleClass().add("toolbar");
+
         javaCb = new CheckBox("Java");
         englishCb = new CheckBox("English");
         teachingCb = new CheckBox("Teaching");
@@ -76,19 +70,22 @@ public class JobListView {
         typeCombo.setPrefWidth(150);
 
         Button resetBtn = new Button("Reset");
-        resetBtn.setStyle(btnStyle + "-fx-background-color: #95a5a6; -fx-text-fill: white;");
+        resetBtn.getStyleClass().add("btn-muted");
 
         HBox filterSpacer = new HBox();
         HBox.setHgrow(filterSpacer, Priority.ALWAYS);
         HBox typeGap = new HBox();
         typeGap.setMinWidth(24);
 
+        Label skillTagLabel = new Label("Skill Tags:");
+        Label positionTypeLabel = new Label("Position Type:");
+
         HBox filterTopRow = new HBox(
                 10,
-                new Label("Skill Tags:"),
+                skillTagLabel,
                 javaCb, englishCb, teachingCb, pythonCb, officeCb,
                 typeGap,
-                new Label("Position Type:"),
+                positionTypeLabel,
                 typeCombo,
                 filterSpacer,
                 resetBtn
@@ -99,12 +96,11 @@ public class JobListView {
         filterSecondRow.setAlignment(Pos.CENTER_LEFT);
         filterSecondRow.setPadding(new Insets(0, 0, 0, 92));
 
-        VBox filterBar = new VBox(4, filterTopRow, filterSecondRow);
-        filterBar.setPadding(new Insets(2, 0, 4, 0));
+        VBox filterBar = new VBox(6, filterTopRow, filterSecondRow);
+        filterBar.getStyleClass().add("filter-bar");
 
-        VBox jobListBox = new VBox(8);
-        jobListBox.setPadding(new Insets(10));
-        jobListBox.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 8;");
+        VBox jobListBox = new VBox(12);
+        jobListBox.getStyleClass().add("list-container");
 
         HBox pageBox = new HBox(10);
         Button prevBtn = new Button("Previous");
@@ -169,9 +165,9 @@ public class JobListView {
             loadJobs(jobListBox, pageLabel);
         });
 
-        VBox root = new VBox(12, title, topBar, filterBar, jobListBox, new Separator(), pageBox);
-        root.setPadding(new Insets(20, 25, 18, 25));
-        root.setStyle("-fx-background-color: #f5f6fa;");
+        VBox root = new VBox(14, title, topBar, filterBar, jobListBox, new Separator(), pageBox);
+        root.getStyleClass().add("app-page");
+        root.setPadding(new Insets(24));
         return root;
     }
 
@@ -210,21 +206,11 @@ public class JobListView {
         String skillRequirements = job.getSkillRequirements() == null
                 ? ""
                 : job.getSkillRequirements().toLowerCase();
-        if (javaCb.isSelected() && !skillRequirements.contains("java")) {
-            return false;
-        }
-        if (englishCb.isSelected() && !skillRequirements.contains("english")) {
-            return false;
-        }
-        if (teachingCb.isSelected() && !skillRequirements.contains("teaching")) {
-            return false;
-        }
-        if (pythonCb.isSelected() && !skillRequirements.contains("python")) {
-            return false;
-        }
-        if (officeCb.isSelected() && !skillRequirements.contains("office")) {
-            return false;
-        }
+        if (javaCb.isSelected() && !skillRequirements.contains("java")) return false;
+        if (englishCb.isSelected() && !skillRequirements.contains("english")) return false;
+        if (teachingCb.isSelected() && !skillRequirements.contains("teaching")) return false;
+        if (pythonCb.isSelected() && !skillRequirements.contains("python")) return false;
+        if (officeCb.isSelected() && !skillRequirements.contains("office")) return false;
         if (strongOnlyCb.isSelected()) {
             SkillMatchResult match = skillMatchService.match(applicant, job);
             if (!"Strong Match".equals(match.getRecommendationLevel())) {
@@ -233,13 +219,6 @@ public class JobListView {
         }
 
         String selectedType = typeCombo.getValue();
-        if (selectedType != null
-                && !"All".equals(selectedType)
-                && job.getPositionType() != null
-                && !job.getPositionType().equalsIgnoreCase(selectedType)) {
-            return false;
-        }
-
         return selectedType == null
                 || "All".equals(selectedType)
                 || (job.getPositionType() != null && job.getPositionType().equalsIgnoreCase(selectedType));
@@ -251,12 +230,8 @@ public class JobListView {
             List<Job> filteredJobs = getFilteredAndSortedJobs();
             int totalPages = filteredJobs.isEmpty() ? 1 : (int) Math.ceil((double) filteredJobs.size() / PAGE_SIZE);
 
-            if (currentPage > totalPages) {
-                currentPage = totalPages;
-            }
-            if (currentPage < 1) {
-                currentPage = 1;
-            }
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
 
             int start = (currentPage - 1) * PAGE_SIZE;
             int end = Math.min(start + PAGE_SIZE, filteredJobs.size());
@@ -265,7 +240,7 @@ public class JobListView {
 
             if (pageJobs.isEmpty()) {
                 Label emptyLabel = new Label("No Matched Jobs");
-                emptyLabel.setStyle("-fx-font-size: 15px; -fx-text-fill: #7f8c8d;");
+                emptyLabel.getStyleClass().add("empty-text");
                 jobListBox.getChildren().add(emptyLabel);
                 pageLabel.setText("Page 1 / 1");
                 return;
@@ -274,47 +249,40 @@ public class JobListView {
             for (Job job : pageJobs) {
                 SkillMatchResult match = skillMatchService.match(applicant, job);
 
-                VBox jobItem = new VBox(5);
-                jobItem.setPadding(new Insets(8, 10, 8, 10));
-                jobItem.setStyle("-fx-background-color: white; -fx-background-radius: 8; "
-                        + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4,0,0,1);");
+                VBox jobItem = new VBox(8);
+                jobItem.getStyleClass().add("list-item-card");
 
                 Label courseLabel = new Label(job.getCourseName() == null ? "Untitled Course" : job.getCourseName());
-                courseLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+                courseLabel.getStyleClass().add("section-title");
 
                 Label basicInfoLabel = new Label(
                         "ID: " + safe(job.getJobId())
-                                + "   |   Type: " + safe(job.getPositionType())
-                                + "   |   Weekly Workload: " + job.getWeeklyWorkload() + "h"
-                                + "   |   MO: " + safe(job.getMoName())
+                                + "   ·   Type: " + safe(job.getPositionType())
+                                + "   ·   Weekly Workload: " + job.getWeeklyWorkload() + "h"
+                                + "   ·   MO: " + safe(job.getMoName())
                 );
-                basicInfoLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #555;");
+                basicInfoLabel.getStyleClass().add("muted-text");
 
-                Label matchScoreLabel = new Label("Match Score: " + String.format("%.1f", match.getMatchScore()) + "%");
-                matchScoreLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #27ae60;");
+                Label matchScoreLabel = new Label("Match: " + String.format("%.1f", match.getMatchScore()) + "%");
+                matchScoreLabel.getStyleClass().addAll("badge", "badge-success");
 
-                Label matchedSkillsLabel = new Label("Matched Skills: " + formatList(match.getMatchedSkills()));
-                matchedSkillsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #2c3e50;");
+                Label matchedSkillsLabel = new Label("Matched: " + formatList(match.getMatchedSkills()));
+                Label missingSkillsLabel = new Label("Missing: " + formatList(match.getMissingSkills()));
+                missingSkillsLabel.getStyleClass().add("muted-text");
 
-                Label missingSkillsLabel = new Label("Missing Skills: " + formatList(match.getMissingSkills()));
-                missingSkillsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #7f8c8d;");
-
-                Label recommendationLabel = new Label("Recommendation: " + safe(match.getRecommendationLevel()));
-                recommendationLabel.setStyle(getRecommendationBadgeStyle(match.getRecommendationLevel()));
+                Label recommendationLabel = new Label(safe(match.getRecommendationLevel()));
+                recommendationLabel.getStyleClass().addAll("badge", recommendationBadgeClass(match.getRecommendationLevel()));
 
                 Button detailBtn = new Button("View Details");
-                detailBtn.setStyle("-fx-font-size: 13px; -fx-padding: 6 12; -fx-background-color: #3498db; "
-                        + "-fx-text-fill: white; -fx-background-radius: 5;");
-
+                detailBtn.getStyleClass().add("btn-info");
                 detailBtn.setOnAction(e -> {
                     JobDetailView detailView = new JobDetailView(stage, applicant, job);
                     stage.getScene().setRoot(detailView.createContent());
                     stage.setTitle("Job Details");
                 });
 
-                HBox matchInfoRow = new HBox(20, matchScoreLabel, matchedSkillsLabel, missingSkillsLabel);
+                HBox matchInfoRow = new HBox(16, matchScoreLabel, matchedSkillsLabel, missingSkillsLabel);
                 matchInfoRow.setAlignment(Pos.CENTER_LEFT);
-                matchInfoRow.setPadding(new Insets(1, 0, 1, 0));
 
                 HBox bottomBar = new HBox();
                 bottomBar.setAlignment(Pos.CENTER_LEFT);
@@ -322,64 +290,30 @@ public class JobListView {
                 HBox.setHgrow(spacer, Priority.ALWAYS);
                 bottomBar.getChildren().addAll(recommendationLabel, spacer, detailBtn);
 
-                jobItem.getChildren().addAll(
-                        courseLabel,
-                        basicInfoLabel,
-                        matchInfoRow,
-                        bottomBar
-                );
-
+                jobItem.getChildren().addAll(courseLabel, basicInfoLabel, matchInfoRow, bottomBar);
                 jobListBox.getChildren().add(jobItem);
             }
 
             pageLabel.setText(String.format("Page %d / %d", currentPage, totalPages));
         } catch (Exception e) {
-            jobListBox.getChildren().add(new Label("Load failed: " + e.getMessage()));
+            Label err = new Label("Load failed: " + e.getMessage());
+            err.getStyleClass().add("status-error");
+            jobListBox.getChildren().add(err);
             e.printStackTrace();
         }
     }
 
     private String formatList(List<String> list) {
-        if (list == null || list.isEmpty()) {
-            return "None";
-        }
+        if (list == null || list.isEmpty()) return "None";
         return String.join(", ", list);
     }
 
-    private String safe(String value) {
-        return value == null ? "" : value;
-    }
+    private String safe(String value) { return value == null ? "" : value; }
 
-    private String getRecommendationBadgeStyle(String recommendationLevel) {
-        String level = recommendationLevel == null ? "" : recommendationLevel;
-        String backgroundColor;
-        String textColor;
-
-        switch (level) {
-            case "Strong Match":
-                backgroundColor = "#e8f5e9";
-                textColor = "#1b5e20";
-                break;
-            case "Moderate Match":
-                backgroundColor = "#fff8e1";
-                textColor = "#e65100";
-                break;
-            case "Weak Match":
-                backgroundColor = "#fdecea";
-                textColor = "#c62828";
-                break;
-            default:
-                backgroundColor = "#eceff1";
-                textColor = "#455a64";
-                break;
-        }
-
-        return "-fx-font-size: 12px;"
-                + "-fx-font-weight: bold;"
-                + "-fx-text-fill: " + textColor + ";"
-                + "-fx-background-color: " + backgroundColor + ";"
-                + "-fx-background-radius: 4;"
-                + "-fx-padding: 4 10;";
+    private String recommendationBadgeClass(String level) {
+        if ("Strong Match".equals(level))   return "badge-success";
+        if ("Moderate Match".equals(level)) return "badge-warning";
+        if ("Weak Match".equals(level))     return "badge-danger";
+        return "badge-neutral";
     }
 }
-

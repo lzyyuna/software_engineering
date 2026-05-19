@@ -35,38 +35,36 @@ public class AdminUserView {
 
     public Parent createContent() {
         VBox root = new VBox(20);
-        root.setPadding(new Insets(30));
-        root.setStyle("-fx-background-color: #f5f6fa;");
+        root.setPadding(new Insets(28));
+        root.getStyleClass().add("app-page");
 
-        // Header
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         Label title = new Label("User Management");
-        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        title.getStyleClass().add("page-title");
 
         HBox spacer = new HBox();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backBtn = new Button("Back to Dashboard");
-        backBtn.setStyle("-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;");
+        backBtn.getStyleClass().add("btn-success");
         backBtn.setOnAction(e -> onBack.run());
 
         header.getChildren().addAll(title, spacer, backBtn);
 
         // ── User List Card ──────────────────────────────────────────────────
-        VBox userCard = new VBox(15);
-        userCard.setPadding(new Insets(20));
-        userCard.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+        VBox userCard = new VBox(14);
+        userCard.getStyleClass().add("surface-card");
         VBox.setVgrow(userCard, Priority.ALWAYS);
 
         Label userCardTitle = new Label("Registered Users");
-        userCardTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        userCardTitle.getStyleClass().add("section-title");
 
-        HBox controls = new HBox(15);
+        HBox controls = new HBox(12);
         controls.setAlignment(Pos.CENTER_LEFT);
 
         TextField searchField = new TextField();
-        searchField.setPromptText("Search by Username...");
+        searchField.setPromptText("Search by username...");
         searchField.setPrefWidth(250);
 
         ComboBox<String> roleFilter = new ComboBox<>();
@@ -74,7 +72,8 @@ public class AdminUserView {
         roleFilter.getSelectionModel().selectFirst();
         roleFilter.setPrefWidth(150);
 
-        controls.getChildren().addAll(new Label("Filter users:"), searchField, roleFilter);
+        Label filterLabel = new Label("Filter:");
+        controls.getChildren().addAll(filterLabel, searchField, roleFilter);
 
         TableView<User> userTable = new TableView<>();
         userTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -106,15 +105,13 @@ public class AdminUserView {
         userCard.getChildren().addAll(userCardTitle, controls, userTable);
 
         // ── Invite Code Card ────────────────────────────────────────────────
-        VBox inviteCard = new VBox(15);
-        inviteCard.setPadding(new Insets(20));
-        inviteCard.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+        VBox inviteCard = new VBox(14);
+        inviteCard.getStyleClass().add("surface-card");
         VBox.setVgrow(inviteCard, Priority.ALWAYS);
 
         Label inviteCardTitle = new Label("Invite Code Management");
-        inviteCardTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        inviteCardTitle.getStyleClass().add("section-title");
 
-        // Generate section
         HBox generateRow = new HBox(12);
         generateRow.setAlignment(Pos.CENTER_LEFT);
 
@@ -124,14 +121,14 @@ public class AdminUserView {
         roleSelector.setPrefWidth(100);
 
         Button generateBtn = new Button("Generate Invite Code");
-        generateBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 6 14;");
+        generateBtn.getStyleClass().add("btn-info");
 
         Label generatedCodeLabel = new Label();
-        generatedCodeLabel.setStyle("-fx-font-family: monospace; -fx-font-size: 14px; -fx-text-fill: #2c3e50;");
+        generatedCodeLabel.setStyle("-fx-font-family: monospace; -fx-font-size: 13px;");
 
         Button copyBtn = new Button("Copy");
+        copyBtn.getStyleClass().add("btn-muted");
         copyBtn.setVisible(false);
-        copyBtn.setStyle("-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-padding: 4 10;");
 
         generateBtn.setOnAction(e -> {
             String role = roleSelector.getValue();
@@ -146,10 +143,9 @@ public class AdminUserView {
             refreshInviteCodes();
         });
 
-        generateRow.getChildren().addAll(
-                new Label("Role:"), roleSelector, generateBtn, generatedCodeLabel, copyBtn);
+        Label roleLabel = new Label("Role:");
+        generateRow.getChildren().addAll(roleLabel, roleSelector, generateBtn, generatedCodeLabel, copyBtn);
 
-        // Invite code table
         TableView<InviteCode> inviteTable = new TableView<>();
         inviteTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         VBox.setVgrow(inviteTable, Priority.ALWAYS);

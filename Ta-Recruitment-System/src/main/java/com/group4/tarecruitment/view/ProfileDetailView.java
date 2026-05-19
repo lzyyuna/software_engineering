@@ -11,9 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.scene.control.ScrollPane;
 
 /**
  * Builds the TA profile detail and profile edit pages.
@@ -28,157 +26,93 @@ public class ProfileDetailView {
         this.stage = stage;
     }
 
-    /**
-     * Creates the default profile display page.
-     *
-     * @return profile display root node
-     */
     public Parent getView() {
         return createDisplayView();
     }
 
     private Parent createDisplayView() {
         Label title = new Label("Profile Details");
-        title.setFont(new Font(22));
-        title.setStyle("-fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        title.getStyleClass().add("page-title");
 
-        VBox infoCard = new VBox(15);
-        infoCard.setPadding(new Insets(30));
-        infoCard.setStyle(
-                "-fx-background-color: #ffffff; " +
-                        "-fx-background-radius: 10; " +
-                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 4);"
-        );
+        VBox infoCard = new VBox(14);
+        infoCard.getStyleClass().add("surface-card");
+        infoCard.setMaxWidth(720);
 
         GridPane infoGrid = new GridPane();
-        infoGrid.setHgap(30);
-        infoGrid.setVgap(18);
+        infoGrid.setHgap(24);
+        infoGrid.setVgap(14);
         infoGrid.setAlignment(Pos.CENTER_LEFT);
 
-        String labelStyle = "-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #34495e;";
-        String valueStyle = "-fx-font-size: 16px; -fx-text-fill: #2c3e50;";
-
-        addInfoRow(infoGrid, 0, "TA ID:", applicant.getTaId(), labelStyle, valueStyle);
-        addInfoRow(infoGrid, 1, "Student ID:", applicant.getStudentId(), labelStyle, valueStyle);
-        addInfoRow(infoGrid, 2, "Name:", applicant.getName(), labelStyle, valueStyle);
-        addInfoRow(infoGrid, 3, "Email:", applicant.getEmail(), labelStyle, valueStyle);
-        addInfoRow(infoGrid, 4, "Available Courses:", applicant.getCourses(), labelStyle, valueStyle);
-        addInfoRow(infoGrid, 5, "Skills:", applicant.getSkillTags(), labelStyle, valueStyle);
-        addInfoRow(infoGrid, 6, "Phone:", applicant.getContact(), labelStyle, valueStyle);
+        addInfoRow(infoGrid, 0, "TA ID:",             applicant.getTaId());
+        addInfoRow(infoGrid, 1, "Student ID:",        applicant.getStudentId());
+        addInfoRow(infoGrid, 2, "Name:",              applicant.getName());
+        addInfoRow(infoGrid, 3, "Email:",             applicant.getEmail());
+        addInfoRow(infoGrid, 4, "Available Courses:", applicant.getCourses());
+        addInfoRow(infoGrid, 5, "Skills:",            applicant.getSkillTags());
+        addInfoRow(infoGrid, 6, "Phone:",             applicant.getContact());
 
         infoCard.getChildren().add(infoGrid);
 
         Button editBtn = new Button("Edit");
-        editBtn.setStyle(
-                "-fx-font-size: 14px; " +
-                        "-fx-padding: 10px 25px; " +
-                        "-fx-background-color: #27ae60; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-background-radius: 5;"
-        );
+        editBtn.getStyleClass().add("btn-success");
         editBtn.setOnAction(e -> {
             stage.getScene().setRoot(createEditView());
             stage.setTitle("Profile Details");
         });
 
         Button backToHomeBtn = new Button("Back to TA Home");
-        backToHomeBtn.setStyle(
-                "-fx-font-size: 14px; " +
-                        "-fx-padding: 10px 25px; " +
-                        "-fx-background-color: #3498db; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-background-radius: 5;"
-        );
+        backToHomeBtn.getStyleClass().add("btn-info");
         backToHomeBtn.setOnAction(e -> {
             TAHomeView taHomeView = new TAHomeView(stage, applicant);
             stage.getScene().setRoot(taHomeView.createContent());
             stage.setTitle("TA Dashboard");
         });
 
-        HBox buttonBox = new HBox(20, editBtn, backToHomeBtn);
+        HBox buttonBox = new HBox(14, editBtn, backToHomeBtn);
         buttonBox.setAlignment(Pos.CENTER);
-        buttonBox.setPadding(new Insets(25, 0, 0, 0));
 
-        VBox root = new VBox(25, title, infoCard, buttonBox);
-        root.setPadding(new Insets(40));
-        root.setAlignment(Pos.CENTER);
-        root.setStyle("-fx-background-color: #f5f6fa;");
+        VBox root = new VBox(20, title, infoCard, buttonBox);
+        root.getStyleClass().add("app-page");
+        root.setPadding(new Insets(36));
+        root.setAlignment(Pos.TOP_CENTER);
 
         return root;
     }
 
     private Parent createEditView() {
-        Label title = new Label("Profile Details");
-        title.setFont(new Font(22));
-        title.setStyle("-fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        Label title = new Label("Edit Profile");
+        title.getStyleClass().add("page-title");
 
-        VBox formCard = new VBox(15);
-        formCard.setPadding(new Insets(30));
-        formCard.setStyle(
-                "-fx-background-color: #ffffff; " +
-                        "-fx-background-radius: 10; " +
-                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 4);"
-        );
+        VBox formCard = new VBox(14);
+        formCard.getStyleClass().add("surface-card");
+        formCard.setMaxWidth(720);
 
         GridPane formGrid = new GridPane();
-        formGrid.setHgap(20);
-        formGrid.setVgap(16);
+        formGrid.setHgap(18);
+        formGrid.setVgap(14);
         formGrid.setAlignment(Pos.CENTER_LEFT);
 
         ColumnConstraints col1 = new ColumnConstraints();
-        col1.setMinWidth(120);
+        col1.setMinWidth(150);
         ColumnConstraints col2 = new ColumnConstraints();
         col2.setHgrow(Priority.ALWAYS);
         formGrid.getColumnConstraints().addAll(col1, col2);
 
-        String labelStyle = "-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #34495e;";
-        String fieldStyle = "-fx-padding: 8 12; -fx-font-size: 14px; -fx-background-radius: 5; -fx-border-color: #dcdde1; -fx-border-radius: 5;";
-        String errorFieldStyle = "-fx-padding: 8 12; -fx-font-size: 14px; -fx-background-radius: 5; -fx-border-color: #e74c3c; -fx-border-radius: 5; -fx-background-color: #fdf2f2;";
-
-        Label taIdLabel = new Label("TA ID:");
-        taIdLabel.setStyle(labelStyle);
         TextField taIdField = new TextField(safe(applicant.getTaId()));
         taIdField.setEditable(false);
         taIdField.setDisable(true);
-        taIdField.setStyle(fieldStyle + "-fx-opacity: 0.8;");
 
-        Label studentIdLabel = new Label("Student ID:");
-        studentIdLabel.setStyle(labelStyle);
         TextField studentIdField = new TextField(safe(applicant.getStudentId()));
-        studentIdField.setStyle(fieldStyle);
-
-        Label nameLabel = new Label("Name:");
-        nameLabel.setStyle(labelStyle);
         TextField nameField = new TextField(safe(applicant.getName()));
-        nameField.setStyle(fieldStyle);
-
-        Label emailLabel = new Label("Email:");
-        emailLabel.setStyle(labelStyle);
         TextField emailField = new TextField(safe(applicant.getEmail()));
-        emailField.setStyle(fieldStyle);
-
-        Label coursesLabel = new Label("Available Courses:");
-        coursesLabel.setStyle(labelStyle);
         TextField coursesField = new TextField(safe(applicant.getCourses()));
-        coursesField.setStyle(fieldStyle);
-
-        Label skillsLabel = new Label("Skills:");
-        skillsLabel.setStyle(labelStyle);
+        TextField contactField = new TextField(safe(applicant.getContact()));
 
         CheckBox cbJava = new CheckBox("Java");
         CheckBox cbEnglish = new CheckBox("English");
         CheckBox cbTeaching = new CheckBox("Teaching");
         CheckBox cbPython = new CheckBox("Python");
         CheckBox cbOffice = new CheckBox("Office");
-
-        String checkStyle = "-fx-font-size: 14px; -fx-text-fill: #2c3e50;";
-        cbJava.setStyle(checkStyle);
-        cbEnglish.setStyle(checkStyle);
-        cbTeaching.setStyle(checkStyle);
-        cbPython.setStyle(checkStyle);
-        cbOffice.setStyle(checkStyle);
 
         String oldSkills = safe(applicant.getSkillTags()).toLowerCase();
         cbJava.setSelected(oldSkills.contains("java"));
@@ -189,74 +123,35 @@ public class ProfileDetailView {
 
         VBox skillsBox = new VBox(6, cbJava, cbEnglish, cbTeaching, cbPython, cbOffice);
 
-        Label contactLabel = new Label("Phone:");
-        contactLabel.setStyle(labelStyle);
-        TextField contactField = new TextField(safe(applicant.getContact()));
-        contactField.setStyle(fieldStyle);
-
-        formGrid.add(taIdLabel, 0, 0);
-        formGrid.add(taIdField, 1, 0);
-
-        formGrid.add(studentIdLabel, 0, 1);
-        formGrid.add(studentIdField, 1, 1);
-
-        formGrid.add(nameLabel, 0, 2);
-        formGrid.add(nameField, 1, 2);
-
-        formGrid.add(emailLabel, 0, 3);
-        formGrid.add(emailField, 1, 3);
-
-        formGrid.add(coursesLabel, 0, 4);
-        formGrid.add(coursesField, 1, 4);
-
-        formGrid.add(skillsLabel, 0, 5);
-        formGrid.add(skillsBox, 1, 5);
-
-        formGrid.add(contactLabel, 0, 6);
-        formGrid.add(contactField, 1, 6);
+        addFormRow(formGrid, 0, "TA ID:",              taIdField);
+        addFormRow(formGrid, 1, "Student ID:",         studentIdField);
+        addFormRow(formGrid, 2, "Name:",               nameField);
+        addFormRow(formGrid, 3, "Email:",              emailField);
+        addFormRow(formGrid, 4, "Available Courses:",  coursesField);
+        addFormRow(formGrid, 5, "Skills:",             skillsBox);
+        addFormRow(formGrid, 6, "Phone:",              contactField);
 
         Label resultLabel = new Label();
         resultLabel.setWrapText(true);
-        resultLabel.setStyle("-fx-font-size: 14px; -fx-padding: 8 0 0 0;");
+        resultLabel.getStyleClass().add("status-label");
 
         Button saveBtn = new Button("Save");
-        saveBtn.setStyle(
-                "-fx-font-size: 14px; " +
-                        "-fx-padding: 10px 25px; " +
-                        "-fx-background-color: #27ae60; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-background-radius: 5;"
-        );
+        saveBtn.getStyleClass().add("btn-success");
 
         Button cancelBtn = new Button("Cancel");
-        cancelBtn.setStyle(
-                "-fx-font-size: 14px; " +
-                        "-fx-padding: 10px 25px; " +
-                        "-fx-background-color: #95a5a6; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-background-radius: 5;"
-        );
+        cancelBtn.getStyleClass().add("btn-muted");
 
         Button backToHomeBtn = new Button("Back to TA Home");
-        backToHomeBtn.setStyle(
-                "-fx-font-size: 14px; " +
-                        "-fx-padding: 10px 25px; " +
-                        "-fx-background-color: #3498db; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-background-radius: 5;"
-        );
+        backToHomeBtn.getStyleClass().add("btn-info");
 
         saveBtn.setOnAction(e -> {
             boolean isFormValid = true;
             resultLabel.setText("");
+            resultLabel.getStyleClass().removeAll("status-error", "status-success");
 
-            studentIdField.setStyle(fieldStyle);
-            nameField.setStyle(fieldStyle);
-            emailField.setStyle(fieldStyle);
-            contactField.setStyle(fieldStyle);
+            for (TextField f : new TextField[]{studentIdField, nameField, emailField, contactField}) {
+                f.getStyleClass().remove("field-error");
+            }
 
             String studentId = studentIdField.getText().trim();
             String name = nameField.getText().trim();
@@ -264,64 +159,46 @@ public class ProfileDetailView {
             String courses = coursesField.getText().trim();
             String contact = contactField.getText().trim();
 
-            if (studentId.isEmpty()) {
-                resultLabel.setText(resultLabel.getText() + "❌ Student ID cannot be empty.\n");
-                studentIdField.setStyle(errorFieldStyle);
-                isFormValid = false;
-            }
+            StringBuilder errors = new StringBuilder();
 
-            if (name.isEmpty()) {
-                resultLabel.setText(resultLabel.getText() + "❌ Name cannot be empty.\n");
-                nameField.setStyle(errorFieldStyle);
-                isFormValid = false;
-            }
-
-            if (email.isEmpty()) {
-                resultLabel.setText(resultLabel.getText() + "❌ Email cannot be empty.\n");
-                emailField.setStyle(errorFieldStyle);
-                isFormValid = false;
-            }
-
-            if (contact.isEmpty()) {
-                resultLabel.setText(resultLabel.getText() + "❌ Phone cannot be empty.\n");
-                contactField.setStyle(errorFieldStyle);
-                isFormValid = false;
-            }
+            if (studentId.isEmpty()) { errors.append("Student ID cannot be empty.\n"); markError(studentIdField); isFormValid = false; }
+            if (name.isEmpty())      { errors.append("Name cannot be empty.\n");      markError(nameField);      isFormValid = false; }
+            if (email.isEmpty())     { errors.append("Email cannot be empty.\n");     markError(emailField);     isFormValid = false; }
+            if (contact.isEmpty())   { errors.append("Phone cannot be empty.\n");     markError(contactField);   isFormValid = false; }
 
             if (!studentId.isEmpty() && !studentId.matches("\\d{10}")) {
-                resultLabel.setText(resultLabel.getText() + "❌ Student ID must be 10 digits.\n");
-                studentIdField.setStyle(errorFieldStyle);
+                errors.append("Student ID must be 10 digits.\n");
+                markError(studentIdField);
                 isFormValid = false;
             }
-
             if (!email.isEmpty() && !email.contains("@")) {
-                resultLabel.setText(resultLabel.getText() + "❌ Invalid email format. Email must contain @.\n");
-                emailField.setStyle(errorFieldStyle);
+                errors.append("Invalid email format. Email must contain @.\n");
+                markError(emailField);
                 isFormValid = false;
             }
-
-            if (!contact.isEmpty()) {
-                if (!contact.matches("^1[3-9]\\d{9}$") && !contact.matches("^\\d{3,4}-\\d{7,8}$")) {
-                    resultLabel.setText(resultLabel.getText() + "❌ Invalid phone number format.\n");
-                    contactField.setStyle(errorFieldStyle);
-                    isFormValid = false;
-                }
+            if (!contact.isEmpty()
+                    && !contact.matches("^1[3-9]\\d{9}$")
+                    && !contact.matches("^\\d{3,4}-\\d{7,8}$")) {
+                errors.append("Invalid phone number format.\n");
+                markError(contactField);
+                isFormValid = false;
             }
 
             StringBuilder skillTags = new StringBuilder();
-            if (cbJava.isSelected()) skillTags.append("Java,");
-            if (cbEnglish.isSelected()) skillTags.append("English,");
+            if (cbJava.isSelected())     skillTags.append("Java,");
+            if (cbEnglish.isSelected())  skillTags.append("English,");
             if (cbTeaching.isSelected()) skillTags.append("Teaching,");
-            if (cbPython.isSelected()) skillTags.append("Python,");
-            if (cbOffice.isSelected()) skillTags.append("Office,");
+            if (cbPython.isSelected())   skillTags.append("Python,");
+            if (cbOffice.isSelected())   skillTags.append("Office,");
 
             if (skillTags.length() == 0) {
-                resultLabel.setText(resultLabel.getText() + "❌ Please select at least one skill.\n");
+                errors.append("Please select at least one skill.\n");
                 isFormValid = false;
             }
 
             if (!isFormValid) {
-                resultLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 14px; -fx-padding: 8 0 0 0;");
+                resultLabel.setText(errors.toString().trim());
+                resultLabel.getStyleClass().add("status-error");
                 return;
             }
 
@@ -340,14 +217,14 @@ public class ProfileDetailView {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Success");
                 alert.setHeaderText(null);
-                alert.setContentText("Profile updated successfully!");
+                alert.setContentText("Profile updated successfully.");
                 alert.showAndWait();
 
                 stage.getScene().setRoot(createDisplayView());
                 stage.setTitle("Profile Details");
             } catch (Exception ex) {
-                resultLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 14px; -fx-padding: 8 0 0 0;");
-                resultLabel.setText("❌ Save failed: " + ex.getMessage());
+                resultLabel.getStyleClass().add("status-error");
+                resultLabel.setText("Save failed: " + ex.getMessage());
                 ex.printStackTrace();
             }
         });
@@ -363,39 +240,50 @@ public class ProfileDetailView {
             stage.setTitle("TA Dashboard");
         });
 
-        HBox buttonBox = new HBox(20, saveBtn, cancelBtn, backToHomeBtn);
+        HBox buttonBox = new HBox(14, saveBtn, cancelBtn, backToHomeBtn);
         buttonBox.setAlignment(Pos.CENTER);
-        buttonBox.setPadding(new Insets(20, 0, 0, 0));
 
         formCard.getChildren().addAll(formGrid, resultLabel);
 
-        VBox root = new VBox(10, title, formCard, buttonBox);
-        root.setPadding(new Insets(10, 40, 20, 40));
+        VBox root = new VBox(18, title, formCard, buttonBox);
+        root.getStyleClass().add("app-page");
+        root.setPadding(new Insets(28, 40, 28, 40));
         root.setAlignment(Pos.TOP_CENTER);
-        root.setStyle("-fx-background-color: #f5f6fa;");
 
         ScrollPane scrollPane = new ScrollPane(root);
         scrollPane.setFitToWidth(true);
         scrollPane.setPannable(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setStyle("-fx-background: #f5f6fa; -fx-background-color: #f5f6fa;");
+        scrollPane.getStyleClass().add("app-page");
 
         return scrollPane;
     }
 
-    private void addInfoRow(GridPane grid, int row, String labelText, String valueText, String labelStyle, String valueStyle) {
+    private void addInfoRow(GridPane grid, int row, String labelText, String valueText) {
         Label label = new Label(labelText);
-        label.setStyle(labelStyle);
+        label.getStyleClass().add("profile-info-label");
 
         Label value = new Label(valueText == null || valueText.isBlank() ? "Not Provided" : valueText);
-        value.setStyle(valueStyle);
+        value.getStyleClass().add("profile-info-value");
 
         grid.add(label, 0, row);
         grid.add(value, 1, row);
     }
 
-    private String safe(String value) {
-        return value == null ? "" : value;
+    private void addFormRow(GridPane grid, int row, String labelText, javafx.scene.Node field) {
+        Label label = new Label(labelText);
+        label.getStyleClass().add("login-label");
+        grid.add(label, 0, row);
+        grid.add(field, 1, row);
+        if (field instanceof Control c) c.setMaxWidth(Double.MAX_VALUE);
     }
+
+    private void markError(TextField field) {
+        if (!field.getStyleClass().contains("field-error")) {
+            field.getStyleClass().add("field-error");
+        }
+    }
+
+    private String safe(String value) { return value == null ? "" : value; }
 }

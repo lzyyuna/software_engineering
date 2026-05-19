@@ -26,20 +26,23 @@ public class TeacherView {
         Label welcomeLabel = new Label("Welcome, " + moUsername);
         welcomeLabel.getStyleClass().add("dashboard-welcome");
 
+        VBox hero = new VBox(6, title, welcomeLabel);
+        hero.getStyleClass().add("hero-card");
+        hero.setMaxWidth(560);
+
         Button publishBtn = new Button("Post TA Position");
         Button viewJobsBtn = new Button("View My Posted Positions");
         Button reviewBtn = new Button("Review Applications");
         Button backBtn = new Button("Back to Role Selection");
 
-        publishBtn.getStyleClass().add("primary-button");
-        viewJobsBtn.getStyleClass().add("secondary-button");
-        reviewBtn.getStyleClass().add("primary-button");
-        backBtn.getStyleClass().add("neutral-button");
+        publishBtn.getStyleClass().add("btn-primary");
+        viewJobsBtn.getStyleClass().add("btn-info");
+        reviewBtn.getStyleClass().add("btn-success");
+        backBtn.getStyleClass().add("btn-muted");
 
-        publishBtn.setPrefWidth(280);
-        viewJobsBtn.setPrefWidth(280);
-        reviewBtn.setPrefWidth(280);
-        backBtn.setPrefWidth(280);
+        for (Button b : new Button[]{publishBtn, viewJobsBtn, reviewBtn, backBtn}) {
+            b.setPrefWidth(280);
+        }
 
         publishBtn.setOnAction(e -> {
             MOPostJobView postJobView = new MOPostJobView(stage, moUsername, moUsername + "@bupt.edu");
@@ -61,16 +64,13 @@ public class TeacherView {
             stage.setScene(ThemeManager.createScene(roleSelectView.createContent(), 1000, 700));
         });
 
-        VBox hero = new VBox(8, title, welcomeLabel);
-        hero.getStyleClass().add("dashboard-hero");
-        hero.setMaxWidth(560);
-
         VBox card = new VBox(14, publishBtn, viewJobsBtn, reviewBtn, backBtn);
-        card.getStyleClass().add("dashboard-card");
+        card.getStyleClass().add("surface-card");
         card.setAlignment(Pos.CENTER);
+        card.setMaxWidth(380);
 
         VBox root = new VBox(20, hero, card);
-        root.getStyleClass().add("dashboard-page");
+        root.getStyleClass().add("app-page");
         root.setPadding(new Insets(36));
         root.setAlignment(Pos.TOP_CENTER);
 

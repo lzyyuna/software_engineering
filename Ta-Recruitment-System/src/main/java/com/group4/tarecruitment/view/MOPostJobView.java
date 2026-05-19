@@ -1,16 +1,17 @@
 package com.group4.tarecruitment.view;
 
 import com.group4.tarecruitment.service.MOService;
+import com.group4.tarecruitment.util.ThemeManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import com.group4.tarecruitment.util.ThemeManager;
 
 public class MOPostJobView {
 
@@ -27,134 +28,109 @@ public class MOPostJobView {
 
     public Parent createContent() {
         Label title = new Label("Post TA Recruitment Position");
-        title.setFont(new Font(20));
-        title.setStyle("-fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        title.getStyleClass().add("page-title");
 
-        // 表单字段
+        Label subtitle = new Label("Fields marked with * are required.");
+        subtitle.getStyleClass().add("page-subtitle");
+
+        VBox header = new VBox(6, title, subtitle);
+        header.setMaxWidth(720);
+
         GridPane form = new GridPane();
-        form.setHgap(10);
-        form.setVgap(10);
-        form.setAlignment(Pos.CENTER);
+        form.setHgap(14);
+        form.setVgap(14);
 
-        Label courseNameLabel = new Label("Course Name*:");
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setMinWidth(180);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.ALWAYS);
+        form.getColumnConstraints().addAll(col1, col2);
+
         TextField courseNameField = new TextField();
         courseNameField.setPromptText("Enter course name");
 
-        Label positionTypeLabel = new Label("Position Type*:");
         ComboBox<String> positionTypeCombo = new ComboBox<>();
         positionTypeCombo.getItems().addAll("Module TA", "Invigilation TA");
         positionTypeCombo.setPromptText("Select position type");
+        positionTypeCombo.setMaxWidth(Double.MAX_VALUE);
 
-        Label workloadLabel = new Label("Weekly Workload* (hours/week):");
         TextField workloadField = new TextField();
         workloadField.setPromptText("Enter weekly workload");
 
-        Label moNameLabel = new Label("MO Name*:");
         TextField moNameField = new TextField(moName);
         moNameField.setEditable(false);
 
-        Label moEmailLabel = new Label("MO Email*:");
         TextField moEmailField = new TextField(moEmail);
         moEmailField.setEditable(false);
 
-        Label skillLabel = new Label("Skill Requirements:");
         TextArea skillArea = new TextArea();
         skillArea.setPromptText("Enter skill requirements");
         skillArea.setPrefRowCount(3);
 
-        Label contentLabel = new Label("Job Content:");
         TextArea contentArea = new TextArea();
-        contentArea.setPromptText("Enter job content/description");
+        contentArea.setPromptText("Enter job content / description");
         contentArea.setPrefRowCount(3);
 
-        Label deadlineLabel = new Label("Application Deadline:");
         TextField deadlineField = new TextField();
         deadlineField.setPromptText("YYYY-MM-DD");
 
-        // 添加到表单
-        form.add(courseNameLabel, 0, 0);
-        form.add(courseNameField, 1, 0);
-        form.add(positionTypeLabel, 0, 1);
-        form.add(positionTypeCombo, 1, 1);
-        form.add(workloadLabel, 0, 2);
-        form.add(workloadField, 1, 2);
-        form.add(moNameLabel, 0, 3);
-        form.add(moNameField, 1, 3);
-        form.add(moEmailLabel, 0, 4);
-        form.add(moEmailField, 1, 4);
-        form.add(skillLabel, 0, 5);
-        form.add(skillArea, 1, 5);
-        form.add(contentLabel, 0, 6);
-        form.add(contentArea, 1, 6);
-        form.add(deadlineLabel, 0, 7);
-        form.add(deadlineField, 1, 7);
+        addFormRow(form, 0, "Course Name *",                courseNameField);
+        addFormRow(form, 1, "Position Type *",              positionTypeCombo);
+        addFormRow(form, 2, "Weekly Workload * (h/week)",   workloadField);
+        addFormRow(form, 3, "MO Name *",                    moNameField);
+        addFormRow(form, 4, "MO Email *",                   moEmailField);
+        addFormRow(form, 5, "Skill Requirements",           skillArea);
+        addFormRow(form, 6, "Job Content",                  contentArea);
+        addFormRow(form, 7, "Application Deadline",         deadlineField);
 
-        // 按钮
+        VBox formCard = new VBox(12, form);
+        formCard.getStyleClass().add("surface-card");
+        formCard.setMaxWidth(720);
+
         Button postBtn = new Button("Post Position");
         Button backBtn = new Button("Back");
+        postBtn.getStyleClass().add("btn-success");
+        backBtn.getStyleClass().add("btn-muted");
 
-        postBtn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;");
-        backBtn.setStyle("-fx-background-color: #95a5a6; -fx-text-fill: white;");
-
-        HBox buttonBox = new HBox(15, postBtn, backBtn);
+        HBox buttonBox = new HBox(12, postBtn, backBtn);
         buttonBox.setAlignment(Pos.CENTER);
 
-        // 状态标签
         Label statusLabel = new Label();
-        statusLabel.setStyle("-fx-text-fill: #e74c3c;");
+        statusLabel.getStyleClass().add("status-label");
 
-        // 按钮事件
         postBtn.setOnAction(e -> {
             try {
-                // 验证必填字段
+                statusLabel.getStyleClass().removeAll("status-error", "status-success");
+
                 String courseName = courseNameField.getText().trim();
                 String positionType = positionTypeCombo.getValue();
                 String workloadStr = workloadField.getText().trim();
 
-                if (courseName.isEmpty()) {
-                    statusLabel.setText("Error: Course Name is required!");
-                    return;
-                }
-                if (positionType == null || positionType.isEmpty()) {
-                    statusLabel.setText("Error: Position Type is required!");
-                    return;
-                }
-                if (workloadStr.isEmpty()) {
-                    statusLabel.setText("Error: Weekly Workload is required!");
-                    return;
-                }
+                if (courseName.isEmpty()) { setError(statusLabel, "Course Name is required."); return; }
+                if (positionType == null || positionType.isEmpty()) { setError(statusLabel, "Position Type is required."); return; }
+                if (workloadStr.isEmpty()) { setError(statusLabel, "Weekly Workload is required."); return; }
 
                 int workload;
                 try {
                     workload = Integer.parseInt(workloadStr);
-                    if (workload <= 0) {
-                        statusLabel.setText("Error: Workload must be a positive number!");
-                        return;
-                    }
+                    if (workload <= 0) { setError(statusLabel, "Workload must be a positive number."); return; }
                 } catch (NumberFormatException ex) {
-                    statusLabel.setText("Error: Workload must be a valid number!");
+                    setError(statusLabel, "Workload must be a valid number.");
                     return;
                 }
 
                 String jobId = moService.postJob(
-                        courseName,
-                        positionType,
-                        workload,
-                        moName,
-                        moEmail,
-                        skillArea.getText().trim(),
-                        contentArea.getText().trim(),
-                        deadlineField.getText().trim()
+                        courseName, positionType, workload, moName, moEmail,
+                        skillArea.getText().trim(), contentArea.getText().trim(), deadlineField.getText().trim()
                 );
 
                 if (jobId != null) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Success");
                     alert.setHeaderText(null);
-                    alert.setContentText("Position posted successfully!\nJob ID: " + jobId);
+                    alert.setContentText("Position posted successfully.\nJob ID: " + jobId);
                     alert.showAndWait();
 
-                    // 清空表单
                     courseNameField.clear();
                     positionTypeCombo.setValue(null);
                     workloadField.clear();
@@ -163,10 +139,10 @@ public class MOPostJobView {
                     deadlineField.clear();
                     statusLabel.setText("");
                 } else {
-                    statusLabel.setText("Error: Failed to post position. Please check your input.");
+                    setError(statusLabel, "Failed to post position. Please check your input.");
                 }
             } catch (Exception ex) {
-                statusLabel.setText("Error: " + ex.getMessage());
+                setError(statusLabel, ex.getMessage());
                 ex.printStackTrace();
             }
         });
@@ -176,11 +152,29 @@ public class MOPostJobView {
             stage.setScene(ThemeManager.createScene(teacherView.createContent(), 1000, 700));
         });
 
-        VBox root = new VBox(20, title, form, buttonBox, statusLabel);
-        root.setPadding(new Insets(30));
-        root.setAlignment(Pos.CENTER);
-        root.setStyle("-fx-background-color: #f5f6fa;");
+        VBox root = new VBox(18, header, formCard, buttonBox, statusLabel);
+        root.getStyleClass().add("app-page");
+        root.setPadding(new Insets(28));
+        root.setAlignment(Pos.TOP_CENTER);
 
         return root;
+    }
+
+    private void addFormRow(GridPane grid, int row, String labelText, javafx.scene.Node field) {
+        Label label = new Label(labelText);
+        label.getStyleClass().add("login-label");
+        grid.add(label, 0, row);
+        grid.add(field, 1, row);
+        if (field instanceof javafx.scene.control.Control c) {
+            c.setMaxWidth(Double.MAX_VALUE);
+        }
+    }
+
+    private void setError(Label label, String text) {
+        label.getStyleClass().removeAll("status-success");
+        if (!label.getStyleClass().contains("status-error")) {
+            label.getStyleClass().add("status-error");
+        }
+        label.setText(text);
     }
 }

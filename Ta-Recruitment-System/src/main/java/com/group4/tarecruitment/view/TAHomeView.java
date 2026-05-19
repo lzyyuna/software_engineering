@@ -35,20 +35,23 @@ public class TAHomeView {
         Label welcomeLabel = new Label("Welcome, " + applicant.getUsername());
         welcomeLabel.getStyleClass().add("dashboard-welcome");
 
+        VBox hero = new VBox(6, title, welcomeLabel);
+        hero.getStyleClass().add("hero-card");
+        hero.setMaxWidth(560);
+
         Button profileBtn = new Button("Profile Details");
         Button resumeBtn = new Button("Upload Resume");
         Button jobListBtn = new Button("View Available Jobs");
         Button backBtn = new Button("Back to Role Selection");
 
-        profileBtn.getStyleClass().add("primary-button");
-        resumeBtn.getStyleClass().add("secondary-button");
-        jobListBtn.getStyleClass().add("primary-button");
-        backBtn.getStyleClass().add("neutral-button");
+        profileBtn.getStyleClass().add("btn-primary");
+        resumeBtn.getStyleClass().add("btn-info");
+        jobListBtn.getStyleClass().add("btn-success");
+        backBtn.getStyleClass().add("btn-muted");
 
-        profileBtn.setPrefWidth(260);
-        resumeBtn.setPrefWidth(260);
-        jobListBtn.setPrefWidth(260);
-        backBtn.setPrefWidth(260);
+        for (Button b : new Button[]{profileBtn, resumeBtn, jobListBtn, backBtn}) {
+            b.setPrefWidth(260);
+        }
 
         profileBtn.setOnAction(e -> {
             ProfileDetailView profileView = new ProfileDetailView(applicant, stage);
@@ -74,16 +77,13 @@ public class TAHomeView {
             stage.setTitle("TA Recruitment System");
         });
 
-        VBox hero = new VBox(8, title, welcomeLabel);
-        hero.getStyleClass().add("dashboard-hero");
-        hero.setMaxWidth(560);
-
         VBox card = new VBox(14, profileBtn, resumeBtn, jobListBtn, backBtn);
-        card.getStyleClass().add("dashboard-card");
+        card.getStyleClass().add("surface-card");
         card.setAlignment(Pos.CENTER);
+        card.setMaxWidth(360);
 
         VBox root = new VBox(20, hero, card);
-        root.getStyleClass().add("dashboard-page");
+        root.getStyleClass().add("app-page");
         root.setPadding(new Insets(36));
         root.setAlignment(Pos.TOP_CENTER);
 
